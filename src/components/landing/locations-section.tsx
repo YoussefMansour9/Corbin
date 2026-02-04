@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
+import { Play } from 'lucide-react';
 
 const locations = [
   { title: 'Antique, Philippines 1', videoUrl: '/videos/location-1.mp4' },
@@ -19,8 +20,13 @@ export function LocationsSection() {
         </div>
         <div className="mt-16 grid gap-8 md:grid-cols-2">
           {locations.map((location) => (
-            <Card key={location.title} className="overflow-hidden rounded-lg shadow-lg">
+            <Card key={location.title} className="overflow-hidden rounded-lg shadow-lg group">
               <CardContent className="p-0 relative aspect-video">
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/20 group-hover:bg-black/10 transition-all pointer-events-none">
+                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                    <Play className="h-8 w-8 text-gray-900 ml-1" />
+                  </div>
+                </div>
                 <video
                   controls
                   playsInline

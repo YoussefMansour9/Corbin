@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Check } from 'lucide-react';
 import { useState } from 'react';
 
 const formSchema = z.object({
@@ -30,6 +30,7 @@ const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
 export function BookConsultForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [messageLength, setMessageLength] = useState(0);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -99,11 +100,16 @@ export function BookConsultForm() {
           <FormField
             control={form.control}
             name="firstName"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel>First Name <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="John" {...field} />
+                  <div className="relative">
+                    <Input placeholder="John" {...field} />
+                    {!fieldState.error && field.value && field.value.length >= 2 && (
+                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,11 +118,16 @@ export function BookConsultForm() {
           <FormField
             control={form.control}
             name="lastName"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel>Last Name <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Doe" {...field} />
+                  <div className="relative">
+                    <Input placeholder="Doe" {...field} />
+                    {!fieldState.error && field.value && field.value.length >= 2 && (
+                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -184,9 +195,23 @@ export function BookConsultForm() {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message <span className="text-destructive">*</span></FormLabel>
+                  <FormLabel>
+                    Message <span className="text-destructive">*</span>
+                    <span className="ml-2 text-sm text-muted-foreground">
+                      ({messageLength}/500)
+                    </span>
+                  </FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Your message here..." rows={4} {...field} />
+                    <Textarea 
+                      placeholder="Your message here..." 
+                      rows={4} 
+                      maxLength={500}
+                      {...field} 
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setMessageLength(e.target.value.length);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

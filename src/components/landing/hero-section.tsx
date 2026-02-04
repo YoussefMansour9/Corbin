@@ -18,7 +18,7 @@ export function HeroSection() {
           data-ai-hint={heroImage.imageHint}
         />
       )}
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40" />
       <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white">
         <div className="container max-w-4xl">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">

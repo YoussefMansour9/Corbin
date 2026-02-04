@@ -74,9 +74,9 @@ export function ServicesSection() {
         <div className="mt-16 max-w-4xl mx-auto">
             <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
                 {serviceCategories.map((category, index) => (
-                    <AccordionItem value={`item-${index}`} key={index}>
+                    <AccordionItem value={`item-${index}`} key={index} className="transition-all hover:bg-muted/50 rounded-lg px-2">
                         <AccordionTrigger className="text-xl font-semibold hover:no-underline">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 transition-transform hover:translate-x-1">
                                 {category.icon}
                                 {category.title}
                             </div>

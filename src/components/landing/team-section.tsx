@@ -26,15 +26,15 @@ export function TeamSection() {
           {teamMembers.map((member) => {
             const memberImage = PlaceHolderImages.find((img) => img.id === member.imageId);
             return (
-              <div key={member.name} className="flex flex-col items-center text-center">
-                 <div className="relative h-40 w-40 rounded-full overflow-hidden border-4 border-white shadow-lg transition-transform duration-300 hover:scale-105">
+              <div key={member.name} className="flex flex-col items-center text-center group">
+                 <div className="relative h-40 w-40 rounded-full overflow-hidden border-4 border-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:border-primary">
                     {memberImage && (
                         <Image
                         src={memberImage.imageUrl}
                         alt={`Portrait of ${member.name}`}
                         fill
                         sizes="160px"
-                        className="object-cover"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
                         quality={85}
                         data-ai-hint={memberImage.imageHint}

@@ -31,6 +31,7 @@ const tiers = [
       'Rate: Starting at $7/hour per employee for teams of 3 or more.',
       'For fewer than 3 employees, the rate is $8/hour per employee.',
     ],
+    popular: false,
   },
   {
     name: 'Professional',
@@ -40,6 +41,7 @@ const tiers = [
     description:
       'Skilled employees with relevant experience who can work independently, solve problems, and contribute directly to operational success.',
     features: ['Rate: Starting at $9/hour'],
+    popular: true,
   },
   {
     name: 'Executive',
@@ -49,6 +51,7 @@ const tiers = [
     description:
       'Senior professionals with proven leadership experience, strategic oversight capabilities, and a track record of driving results. Ideal for high-impact roles requiring decision-making authority and minimal supervision.',
     features: ['Rate: Starting at $11/hour'],
+    popular: false,
   },
 ];
 
@@ -91,8 +94,17 @@ export function PricingSection() {
           {tiers.map((tier) => (
             <Card
               key={tier.priceId}
-              className="flex flex-col rounded-2xl border-primary/20 shadow-lg"
+              className={`flex flex-col rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
+                tier.popular ? 'border-primary border-2 relative' : 'border-primary/20'
+              }`}
             >
+              {tier.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <Badge className="bg-primary text-primary-foreground px-4 py-1 text-sm font-semibold">
+                    Most Popular
+                  </Badge>
+                </div>
+              )}
               <CardHeader className="p-6">
                 <CardTitle className="text-2xl font-bold">{tier.name}</CardTitle>
               </CardHeader>

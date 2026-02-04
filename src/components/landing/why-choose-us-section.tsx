@@ -54,7 +54,7 @@ export function WhyChooseUsSection() {
     ];
 
   return (
-    <section id="why-choose-us" className="py-20 md:py-28">
+    <section id="why-choose-us" className="py-20 md:py-28 bg-gradient-to-b from-background to-muted/20">
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Corbin Staffing?</h2>
@@ -70,7 +70,7 @@ export function WhyChooseUsSection() {
             <ul className="space-y-6">
               {commonProblems.map((problem) => (
                 <li key={problem.title} className="flex gap-4 items-start">
-                  <span className="text-xl pt-1">❌</span>
+                  <span className="text-2xl pt-1">❌</span>
                   <div>
                     <h4 className="font-semibold">{problem.title}</h4>
                     <p className="text-muted-foreground">{problem.description}</p>
@@ -85,7 +85,7 @@ export function WhyChooseUsSection() {
             <ul className="space-y-6">
               {corbinSolutions.map((solution) => (
                 <li key={solution.title} className="flex gap-4 items-start">
-                  <span className="text-xl pt-1">✔</span>
+                  <span className="text-2xl pt-1">✔</span>
                   <div>
                     <h4 className="font-semibold">{solution.title}</h4>
                     <p className="text-muted-foreground">{solution.description}</p>
