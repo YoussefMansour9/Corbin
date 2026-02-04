@@ -1,0 +1,76 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A professional team working together in an office",
+      "imageUrl": "/images/hero.jpg",
+      "imageHint": "professional team"
+    },
+    {
+      "id": "about",
+      "description": "Diverse team in a meeting, looking at a whiteboard",
+      "imageUrl": "https://images.unsplash.com/photo-1624555130581-1d9cca783bc0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0ZWFtJTIwbWVldGluZ3xlbnwwfHx8fDE3NjkyMDIwNzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "team meeting"
+    },
+    {
+      "id": "team-member-1",
+      "description": "Portrait of Mendel Magalnic",
+      "imageUrl": "/images/member-1.jpg",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "team-member-2",
+      "description": "Portrait of Ephraim Deutsch",
+      "imageUrl": "/images/member-2.jpg",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "team-member-3",
+      "description": "Portrait of Salma Wael",
+      "imageUrl": "/images/member-3.jpg",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "team-member-4",
+      "description": "Portrait of Nour ElTahan",
+      "imageUrl": "/images/member-4.jpg",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "team-member-5",
+      "description": "Portrait of Carl Orale",
+      "imageUrl": "/images/member-5.jpg",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "team-member-6",
+      "description": "Portrait of Dei Saligumba",
+      "imageUrl": "/images/member-6.jpg",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "team-member-7",
+      "description": "Portrait of Kirk Fernandez",
+      "imageUrl": "/images/member-7.jpg",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "team-member-8",
+      "description": "Portrait of Dov Kenner",
+      "imageUrl": "/images/member-8.jpg",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "location-1",
+      "description": "Video thumbnail of the New York office",
+      "imageUrl": "/images/location-thumbnail-1.jpg",
+      "imageHint": "city office"
+    },
+    {
+      "id": "location-2",
+      "description": "Video thumbnail of the San Francisco office",
+      "imageUrl": "/images/location-thumbnail-2.jpg",
+      "imageHint": "office building"
+    }
+  ]
+}
