@@ -17,6 +17,7 @@ const poppins = Poppins({
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://corbinstaffing.com'),
   title: 'Corbin Staffing',
   description: 'Let Us Find The Right Employees For Your Needs',
   keywords: ['staffing', 'recruitment', 'outsourcing', 'hiring', 'professionals'],

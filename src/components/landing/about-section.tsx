@@ -1,9 +1,6 @@
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function AboutSection() {
-  const aboutImage = PlaceHolderImages.find((img) => img.id === 'about');
-
   return (
     <section id="about" className="py-20 md:py-28 bg-card">
       <div className="container">
@@ -25,18 +22,15 @@ export function AboutSection() {
             </p>
           </div>
           <div className="mt-12 flex justify-center">
-            {aboutImage && (
-              <Image
-                src={aboutImage.imageUrl}
-                alt={aboutImage.description}
-                width={600}
-                height={400}
-                className="rounded-lg shadow-xl"
-                loading="lazy"
-                quality={85}
-                data-ai-hint={aboutImage.imageHint}
-              />
-            )}
+            <Image
+              src="/images/about.jpg"
+              alt="About Corbin Staffing"
+              width={600}
+              height={400}
+              className="rounded-lg shadow-xl"
+              loading="lazy"
+              quality={85}
+            />
           </div>
         </div>
       </div>
