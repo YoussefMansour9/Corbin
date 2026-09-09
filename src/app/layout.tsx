@@ -4,6 +4,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { Header } from '@/components/landing/header';
 import { Footer } from '@/components/landing/footer';
+import { AnnouncementBar } from '@/components/landing/announcement-bar';
 import { FloatingWhatsAppButton } from '@/components/landing/whatsapp-icon';
 import Script from 'next/script';
 
@@ -57,15 +58,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <head>
-        <link rel="icon" href="/images/Logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/images/Logo.png" />
-      </head>
+      <head />
       <body className={`${poppins.className} antialiased flex flex-col min-h-screen bg-background text-foreground`}>
         <Script
             src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
             strategy="afterInteractive"
         />
+        <AnnouncementBar />
         <Header />
         <main className="flex-1">
           {children}

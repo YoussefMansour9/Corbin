@@ -15,6 +15,9 @@ const WhyChooseUsSection = dynamic(() => import('@/components/landing/why-choose
 const ContactSection = dynamic(() => import('@/components/landing/contact-section').then(mod => ({ default: mod.ContactSection })), {
   loading: () => <div className="py-20 md:py-28 bg-card" />
 });
+const CalendlyEmbed = dynamic(() => import('@/components/vertical/calendly-embed').then(mod => ({ default: mod.CalendlyEmbed })), {
+  loading: () => <div className="py-20 md:py-28" />
+});
 
 export default function Home() {
   return (
@@ -24,6 +27,7 @@ export default function Home() {
       <ServicesSection />
       <AboutSection />
       <WhyChooseUsSection />
+      <CalendlyEmbed />
       <ContactSection />
     </>
   );
