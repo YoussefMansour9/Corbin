@@ -11,7 +11,7 @@ const steps = [
     icon: <User className="w-8 h-8 text-primary" />,
     title: 'Interview',
     number: '2',
-    description: 'Review candidates on your schedule with our pre-recorded interviews—see their skills, personality, and communication before you decide.',
+    description: 'Review candidates on your schedule with our pre-recorded interviews. See their skills, personality, and communication before you decide.',
   },
   {
     icon: <Headset className="w-8 h-8 text-primary" />,
@@ -21,12 +21,14 @@ const steps = [
   },
 ];
 
-export function HowItWorksSection() {
+/** `asPageHeading` promotes the section title to <h1> on the standalone /how-it-works page. */
+export function HowItWorksSection({ asPageHeading = false }: { asPageHeading?: boolean }) {
+  const Heading = asPageHeading ? 'h1' : 'h2';
   return (
     <section id="how-it-works" className="py-20 md:py-28">
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-24">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How it works</h2>
+          <Heading className="text-3xl font-bold tracking-tight sm:text-4xl">How It Works</Heading>
           <p className="mt-4 text-lg text-muted-foreground">
             Let Us Find The Right Employees For Your Needs
           </p>

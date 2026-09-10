@@ -1,46 +1,70 @@
 'use client';
 
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { Play } from 'lucide-react';
 
-const locations = [
-  { title: 'Antique, Philippines 1', videoUrl: '/videos/location-1.mp4' },
-  { title: 'Antique, Philippines 2', videoUrl: '/videos/location-2.mp4' },
+interface Location {
+  title: string;
+  videoUrl: string;
+  /**
+   * Real office photos. Drop files in /public/images/offices and list them
+   * here; the gallery below renders automatically once the array is filled.
+   */
+  photos?: { src: string; alt: string }[];
+}
+
+const locations: Location[] = [
+  { title: 'Antique, Philippines 1', videoUrl: '/videos/location-1.mp4', photos: [] },
+  { title: 'Antique, Philippines 2', videoUrl: '/videos/location-2.mp4', photos: [] },
 ];
 
 export function LocationsSection() {
   return (
-    <section id="locations" className="py-20 md:py-28 bg-card">
+    <section id="locations" className="py-16 md:py-24">
       <div className="container">
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Locations</h2>
+        <div className="mx-auto max-w-3xl text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Our Locations</h1>
           <p className="mt-4 text-lg text-muted-foreground">
             Take a virtual tour of our modern and collaborative office spaces.
           </p>
+          <div className="mx-auto mt-4 h-1.5 w-24 rounded-full bg-primary" />
         </div>
-        <div className="mt-16 grid gap-8 md:grid-cols-2">
+
+        <div className="mt-14 grid gap-8 md:grid-cols-2">
           {locations.map((location) => (
-            <Card key={location.title} className="overflow-hidden rounded-lg shadow-lg group">
-              <CardContent className="p-0 relative aspect-video">
-                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/20 group-hover:bg-black/10 transition-all pointer-events-none">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                    <Play className="h-8 w-8 text-gray-900 ml-1" />
-                  </div>
-                </div>
+            <Card key={location.title} className="overflow-hidden rounded-2xl shadow-lg">
+              <CardContent className="p-0">
                 <video
                   controls
                   playsInline
                   preload="metadata"
                   src={location.videoUrl}
-                  className="w-full h-full object-cover"
+                  className="aspect-video w-full bg-muted object-cover"
                 >
                   Your browser does not support the video tag.
                 </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 p-6 pointer-events-none">
-                  <h3 className="text-2xl font-semibold text-white">{location.title}</h3>
-                </div>
               </CardContent>
+
+              <div className="p-6">
+                <h2 className="text-xl font-bold">{location.title}</h2>
+
+                {location.photos && location.photos.length > 0 && (
+                  <ul className="mt-4 grid grid-cols-3 gap-3">
+                    {location.photos.map((photo) => (
+                      <li key={photo.src} className="relative aspect-square overflow-hidden rounded-lg border">
+                        <Image
+                          src={photo.src}
+                          alt={photo.alt}
+                          fill
+                          sizes="(max-width: 768px) 30vw, 15vw"
+                          className="object-cover"
+                          loading="lazy"
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </Card>
           ))}
         </div>

@@ -8,14 +8,16 @@ import { Button } from '@/components/ui/button';
 const STORAGE_KEY = 'corbin-roofing-announcement-dismissed';
 
 export function AnnouncementBar() {
-  const [visible, setVisible] = useState(false);
+  // Rendered by default so the server HTML already reserves the bar's height.
+  // Starting hidden and revealing it on mount pushed the entire page down on
+  // every first visit, which is a large layout shift right at the top.
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     try {
-      const dismissed = sessionStorage.getItem(STORAGE_KEY);
-      if (!dismissed) setVisible(true);
+      if (sessionStorage.getItem(STORAGE_KEY)) setVisible(false);
     } catch {
-      setVisible(true);
+      // Storage unavailable: leave the bar up.
     }
   }, []);
 
@@ -40,7 +42,7 @@ export function AnnouncementBar() {
         <div className="flex min-w-0 flex-1 items-center justify-center gap-2 text-center">
           <Calendar className="hidden h-4 w-4 shrink-0 sm:block" aria-hidden="true" />
           <p className="truncate text-xs font-medium uppercase tracking-wider sm:text-sm">
-            <span className="hidden sm:inline">Now Hiring &mdash; Visit us at the </span>
+            <span className="hidden sm:inline">Now Hiring &middot; Visit us at the </span>
             <span className="sm:hidden">See us at the </span>
             <span className="font-bold">2026 Texas Roofing Conference</span>
             <span className="hidden md:inline"> &middot; Gaylord Texan Resort, Grapevine TX</span>

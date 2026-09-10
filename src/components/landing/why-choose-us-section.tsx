@@ -2,11 +2,11 @@ export function WhyChooseUsSection() {
     const commonProblems = [
       {
         title: 'No Vetting or Quality Control',
-        description: 'You’re responsible for interviews, skill testing, and background checks — and mistakes cost time and money.',
+        description: 'You’re responsible for interviews, skill testing, and background checks, and mistakes cost time and money.',
       },
       {
         title: 'High Turnover Risk',
-        description: 'Freelancers can disappear, quit suddenly, or take on other clients — leaving your business exposed.',
+        description: 'Freelancers can disappear, quit suddenly, or take on other clients, leaving your business exposed.',
       },
       {
         title: 'No Backup Support',
@@ -41,7 +41,7 @@ export function WhyChooseUsSection() {
       },
       {
         title: 'Managed Payroll & Compliance',
-        description: 'We handle payroll, HR administration, and local compliance and regulations — so you can focus on your business.',
+        description: 'We handle payroll, HR administration, and local compliance and regulations, so you can focus on your business.',
       },
       {
         title: 'Proven Offshore Office Experience',

@@ -1,25 +1,43 @@
 import { ContactForm } from '@/components/landing/contact-form';
+import { PageHero } from '@/components/shared/page-hero';
 
 export function ContactSection() {
   return (
-    <section id="contact" className="py-20 md:py-28">
-      <div className="container">
-        <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Hiring Form</h2>
-                <p className="mt-4 text-lg text-muted-foreground">
-                Fill out the form below and we’ll be in touch within 24 hours to help you find your next great hire.
-                </p>
-            </div>
+    <>
+      <PageHero
+        eyebrow="Ready to Hire"
+        headline="Ready to Hire"
+        body="Tell us about the role in detail and we will start recruiting candidates built around it. We follow up within 24 hours."
+      />
+
+      <section id="contact" className="py-16 md:py-20">
+        <div className="container">
+          <div className="mx-auto max-w-4xl">
             <ContactForm />
+
             <div className="mt-12 text-center text-muted-foreground">
-                <h3 className="text-lg font-semibold text-foreground">Have Any Questions or Need Help?</h3>
-                <p className="mt-2">
-                Need help with a job description? <a href="mailto:Info@corbinstaffing.com" className="text-primary font-medium hover:underline">Contact Us</a> and we'll be happy to assist.
-                </p>
+              <h2 className="text-lg font-semibold text-foreground">Have Any Questions or Need Help?</h2>
+              <p className="mt-2">
+                Need help with a job description?{' '}
+                <a
+                  href="mailto:Info@corbinstaffing.com"
+                  className="font-medium text-primary hover:underline"
+                >
+                  Contact us
+                </a>{' '}
+                and we'll be happy to assist.
+              </p>
+              <p className="mt-3 text-sm">
+                Just exploring?{' '}
+                <a href="/book-a-consult" className="font-medium text-primary hover:underline">
+                  Book a free consultation
+                </a>{' '}
+                instead. It only takes five fields.
+              </p>
             </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

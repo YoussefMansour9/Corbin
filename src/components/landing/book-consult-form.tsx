@@ -1,229 +1,153 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import type { z } from 'zod';
+import { Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Check } from 'lucide-react';
-import { useState } from 'react';
+import { isEmailJsConfigured, sendEmail } from '@/lib/emailjs';
+import { saveLead } from '@/lib/leads/save-lead';
+import { consultSchema } from '@/lib/leads/schema';
+import { FormHoneypot } from '@/components/landing/form-honeypot';
 
-const formSchema = z.object({
-  firstName: z.string().min(2, { message: 'First name must be at least 2 characters.' }),
-  lastName: z.string().min(2, { message: 'Last name must be at least 2 characters.' }),
-  companyName: z.string().min(2, { message: 'Company name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  phone: z.string().min(10, { message: 'Please enter a valid phone number.' }),
-  howDidYouHear: z.string().min(2, { message: 'This field is required.' }),
-  message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
-});
+/**
+ * Short consultation form. The content guide keeps this to five fields to
+ * reduce friction. The long intake lives in the Ready to Hire form.
+ */
+const formSchema = consultSchema;
 
+type FormValues = z.infer<typeof formSchema>;
 
-// EmailJS credentials from environment variables
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '';
 const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_BOOK_CONSULT_TEMPLATE_ID || '';
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
+
+const fields: { name: keyof FormValues; label: string; placeholder: string; type?: string; full?: boolean }[] = [
+  { name: 'name', label: 'Name', placeholder: 'John Smith' },
+  { name: 'company', label: 'Company', placeholder: 'Smith & Co.' },
+  { name: 'phone', label: 'Phone', placeholder: '(555) 123-4567', type: 'tel' },
+  { name: 'email', label: 'Email', placeholder: 'john@company.com', type: 'email' },
+  {
+    name: 'position',
+    label: 'What position do you need help with?',
+    placeholder: 'After-hours call agent, administrative assistant, CAD drafter…',
+    full: true,
+  },
+];
 
 export function BookConsultForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [messageLength, setMessageLength] = useState(0);
+  const [honeypot, setHoneypot] = useState('');
+  const mountedAt = useRef(Date.now());
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      companyName: '',
-      email: '',
-      phone: '',
-      howDidYouHear: '',
-      message: '',
-    },
+    defaultValues: { name: '', company: '', phone: '', email: '', position: '' },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      toast({
-        title: 'Configuration Error',
-        description: 'EmailJS is not properly configured. Please contact support.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
+  async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
-    
-    try {
-      // Initialize EmailJS if not already done
-      if (typeof window !== 'undefined' && (window as any).emailjs) {
-        (window as any).emailjs.init(EMAILJS_PUBLIC_KEY);
-      }
-      
-      await (window as any).emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name: `${values.firstName} ${values.lastName}`,
-          from_email: values.email,
-          company_name: values.companyName,
-          phone_number: values.phone,
-          how_did_you_hear: values.howDidYouHear,
-          message: values.message,
-          to_name: 'Corbin Staffing',
-        }
-      );
 
+    // Save to the database first. This is the durable record, so an email
+    // failure can no longer lose the lead.
+    const saved = await saveLead(
+      { formType: 'consult', data: values },
+      { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
+    );
+
+    // Then the notification, which is how the team actually hears about it.
+    let emailed = false;
+    if (isEmailJsConfigured(EMAILJS_TEMPLATE_ID)) {
+      try {
+        await sendEmail(EMAILJS_TEMPLATE_ID, {
+          from_name: values.name,
+          from_email: values.email,
+          company_name: values.company,
+          phone_number: values.phone,
+          position_needed: values.position,
+          to_name: 'Corbin Staffing',
+        });
+        emailed = true;
+      } catch {
+        // Reported below only if the database write also failed.
+      }
+    }
+
+    setIsSubmitting(false);
+
+    // Only a genuine failure is one where neither path captured the lead.
+    if (saved.ok || emailed) {
       toast({
-        title: 'Form Submitted!',
-        description: "Thank you for your inquiry. We'll be in touch shortly.",
+        title: 'Request Received',
+        description: "Thanks for reaching out. We'll be in touch shortly to schedule your consultation.",
       });
       form.reset();
-    } catch (error) {
-      toast({
-        title: 'Something went wrong',
-        description: 'There was an error sending your message. Please try again later.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
+      setHoneypot('');
+      mountedAt.current = Date.now();
+      return;
     }
+
+    toast({
+      title: 'Something went wrong',
+      description: 'There was an error sending your request. Please try again later.',
+      variant: 'destructive',
+    });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-card p-8 rounded-lg border">
-        <div className="grid grid-cols-1 gap-y-6 gap-x-8 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormLabel>First Name <span className="text-destructive">*</span></FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input placeholder="John" {...field} />
-                    {!fieldState.error && field.value && field.value.length >= 2 && (
-                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormLabel>Last Name <span className="text-destructive">*</span></FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input placeholder="Doe" {...field} />
-                    {!fieldState.error && field.value && field.value.length >= 2 && (
-                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="sm:col-span-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="relative space-y-6 rounded-2xl border bg-card p-6 shadow-sm sm:p-8"
+      >
+        <FormHoneypot value={honeypot} onChange={setHoneypot} />
+        <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+          {fields.map((item) => (
             <FormField
+              key={item.name}
               control={form.control}
-              name="companyName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company Name <span className="text-destructive">*</span></FormLabel>
-                  <FormControl>
-                    <Input placeholder="Acme Inc." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email <span className="text-destructive">*</span></FormLabel>
-                <FormControl>
-                  <Input placeholder="john.doe@example.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Phone <span className="text-destructive">*</span></FormLabel>
-                <FormControl>
-                  <Input placeholder="(555) 555-5555" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="howDidYouHear"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>How did you hear about us? <span className="text-destructive">*</span></FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Google, a friend, etc." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
+              name={item.name}
+              render={({ field, fieldState }) => (
+                <FormItem className={item.full ? 'sm:col-span-2' : undefined}>
                   <FormLabel>
-                    Message <span className="text-destructive">*</span>
-                    <span className="ml-2 text-sm text-muted-foreground">
-                      ({messageLength}/500)
-                    </span>
+                    {item.label} <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Your message here..." 
-                      rows={4} 
-                      maxLength={500}
-                      {...field} 
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setMessageLength(e.target.value.length);
-                      }}
-                    />
+                    <div className="relative">
+                      <Input type={item.type ?? 'text'} placeholder={item.placeholder} {...field} />
+                      {!fieldState.error && field.value.length >= 2 && (
+                        <Check className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-green-500" />
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
+          ))}
         </div>
 
-        <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isSubmitting ? 'Submitting...' : 'SUBMIT'}
+        <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sending…
+            </>
+          ) : (
+            'Request My Consultation'
+          )}
         </Button>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Hiring for a specific role already?{' '}
+          <a href="/contact" className="font-medium text-primary underline hover:no-underline">
+            Use the Ready to Hire form
+          </a>
+          .
+        </p>
       </form>
     </Form>
   );

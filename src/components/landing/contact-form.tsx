@@ -8,41 +8,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { isEmailJsConfigured, sendEmail } from '@/lib/emailjs';
+import { saveLead } from '@/lib/leads/save-lead';
+import { hireSchema } from '@/lib/leads/schema';
+import { FormHoneypot } from '@/components/landing/form-honeypot';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const formSchema = z.object({
-  fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
-  businessName: z.string().min(2, { message: 'Business name must be at least 2 characters.' }),
-  phoneNumber: z.string().min(10, { message: 'Please enter a valid phone number.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  businessWebsite: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
-  jobTitle: z.string().min(2, { message: 'Role you are hiring for must be at least 2 characters.' }),
-  jobDescription: z.string().min(20, { message: 'Job description must be at least 20 characters.' }),
-  essentialPrograms: z.string().optional(),
-  jobHours: z.string().min(5, { message: 'Please specify job hours.' }),
-  additionalInfo: z.string().optional(),
-  referringAgent: z.string().optional(),
-  genderPreference: z.enum(['male', 'female', 'any'], {
-    required_error: 'Please select a gender preference.',
-  }),
-  workplacePreference: z.enum(['in-office', 'remote', 'either'], {
-    required_error: 'Please select a workplace preference.',
-  }),
-  howDidYouHear: z.string().optional(),
-});
+const formSchema = hireSchema;
 
-
-// EmailJS credentials from environment variables
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '';
 const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_HIRING_FORM_TEMPLATE_ID || '';
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
 
 export function ContactForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
+  const mountedAt = useRef(Date.now());
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,27 +46,18 @@ export function ContactForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      toast({
-        title: 'Configuration Error',
-        description: 'EmailJS is not properly configured. Please contact support.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
     setIsSubmitting(true);
-    
-    try {
-      // Initialize EmailJS if not already done
-      if (typeof window !== 'undefined' && (window as any).emailjs) {
-        (window as any).emailjs.init(EMAILJS_PUBLIC_KEY);
-      }
-      
-      await (window as any).emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
+
+    // Durable record first, notification second.
+    const saved = await saveLead(
+      { formType: 'hire', data: values },
+      { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
+    );
+
+    let emailed = false;
+    if (isEmailJsConfigured(EMAILJS_TEMPLATE_ID)) {
+      try {
+        await sendEmail(EMAILJS_TEMPLATE_ID, {
           from_name: values.fullName,
           from_email: values.email,
           business_name: values.businessName,
@@ -95,32 +69,43 @@ export function ContactForm() {
           job_hours: values.jobHours,
           additional_info: values.additionalInfo,
           referring_agent: values.referringAgent,
-          gender_preference: values.genderPreference,
           workplace_preference: values.workplacePreference,
           how_did_you_hear: values.howDidYouHear,
           to_name: 'Corbin Staffing',
-        }
-      );
+        });
+        emailed = true;
+      } catch {
+        // Only surfaced below if the database write also failed.
+      }
+    }
 
+    setIsSubmitting(false);
+
+    if (saved.ok || emailed) {
       toast({
         title: 'Form Submitted!',
         description: "Thank you for your inquiry. We'll be in touch within 24 hours.",
       });
       form.reset();
-    } catch (error) {
-      toast({
-        title: 'Something went wrong',
-        description: 'There was an error sending your message. Please try again later.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
+      setHoneypot('');
+      mountedAt.current = Date.now();
+      return;
     }
+
+    toast({
+      title: 'Something went wrong',
+      description: 'There was an error sending your message. Please try again later.',
+      variant: 'destructive',
+    });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-card p-8 rounded-lg border">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="relative space-y-8 rounded-lg border bg-card p-8"
+      >
+        <FormHoneypot value={honeypot} onChange={setHoneypot} />
         <div className="grid grid-cols-1 gap-y-6 gap-x-8 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -279,37 +264,6 @@ export function ContactForm() {
               )}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name="genderPreference"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Candidate Gender Preference <span className="text-destructive">*</span></FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex flex-col space-y-1"
-                  >
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl><RadioGroupItem value="male" /></FormControl>
-                      <FormLabel className="font-normal">Male</FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl><RadioGroupItem value="female" /></FormControl>
-                      <FormLabel className="font-normal">Female</FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl><RadioGroupItem value="any" /></FormControl>
-                      <FormLabel className="font-normal">Any</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}

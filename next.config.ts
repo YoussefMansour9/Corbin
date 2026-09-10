@@ -43,6 +43,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // The Services page was replaced by Industries.
+  async redirects() {
+    return [
+      { source: '/services', destination: '/industries', permanent: true },
+    ];
+  },
   // Security headers
   async headers() {
     return [

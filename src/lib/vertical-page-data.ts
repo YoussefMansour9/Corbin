@@ -100,7 +100,7 @@ export interface VerticalPageData {
 }
 
 // ---------------------------------------------------------------------------
-// Roofing Vertical — Texas Roofing Conference 2026
+// Roofing Vertical: Texas Roofing Conference 2026
 // ---------------------------------------------------------------------------
 
 export const roofingPageData: VerticalPageData = {
@@ -119,7 +119,7 @@ export const roofingPageData: VerticalPageData = {
 
   problem: {
     headline: 'Your crews aren\u2019t the bottleneck. Your office is.',
-    body: 'You\u2019re chasing adjusters at 9\u202Fpm, answering calls from the truck, and watching your best leads go to voicemail during peak season. The field work gets done\u200A\u2014\u200Ait\u2019s everything behind it that\u2019s falling apart.',
+    body: 'You\u2019re chasing adjusters at 9\u202Fpm, answering calls from the truck, and watching your best leads go to voicemail during peak season. The field work gets done. It\u2019s everything behind it that\u2019s falling apart.',
     painPoints: [
       {
         icon: 'PhoneOff',
@@ -162,7 +162,7 @@ export const roofingPageData: VerticalPageData = {
         title: 'Production / CRM coordinator',
         tools: 'AccuLynx, JobNimbus, Roofr, CompanyCam, Leap',
         description:
-          'Keep jobs moving through your pipeline\u200A\u2014\u200Aupdating statuses, scheduling crews, tracking materials.',
+          'Keep jobs moving through your pipeline: updating statuses, scheduling crews, tracking materials.',
       },
       {
         title: 'Permits & material ordering',
@@ -209,7 +209,7 @@ export const roofingPageData: VerticalPageData = {
       },
       {
         label: 'Recruiting',
-        local: '4\u20138 weeks',
+        local: '4 to 8 weeks',
         corbin: 'We handle it',
         localIsNegative: true,
       },
@@ -236,7 +236,7 @@ export const roofingPageData: VerticalPageData = {
         number: '1',
         title: 'Tell us the role',
         description:
-          'A 15-minute call. You tell us what you need\u200A\u2014\u200Awe start sourcing immediately.',
+          'A 15-minute call. You tell us what you need and we start sourcing immediately.',
       },
       {
         number: '2',
@@ -259,17 +259,17 @@ export const roofingPageData: VerticalPageData = {
       {
         question: 'How good is their English?',
         answer:
-          'Every candidate we place has been screened for fluent, neutral-accent English. We record pre-interviews so you can hear them before making a decision\u200A\u2014\u200Ano surprises.',
+          'Every candidate we place has been screened for fluent, neutral-accent English. We record pre-interviews so you can hear them before making a decision. No surprises.',
       },
       {
         question: 'Where do your people work from?',
         answer:
-          'Our staff work from our managed offices in the Philippines and Egypt. Supervised facilities with reliable internet, power backup, and IT support\u200A\u2014\u200Anot someone\u2019s kitchen table.',
+          'Our staff work from our managed offices in the Philippines and Egypt. Supervised facilities with reliable internet, power backup, and IT support, not someone\u2019s kitchen table.',
       },
       {
         question: 'Can they work U.S. business hours?',
         answer:
-          'Yes. Our teams are set up to work any U.S. time zone\u200A\u2014\u200Aincluding early mornings and evenings if your storm season demands it.',
+          'Yes. Our teams are set up to work any U.S. time zone, including early mornings and evenings if your storm season demands it.',
       },
       {
         question: 'What if someone doesn\u2019t work out?',
@@ -279,12 +279,12 @@ export const roofingPageData: VerticalPageData = {
       {
         question: 'Who handles payroll, HR, and compliance?',
         answer:
-          'We do. Payroll, benefits, local labor law compliance, equipment\u200A\u2014\u200Aall handled by Corbin. You get one simple invoice.',
+          'We do. Payroll, benefits, local labor law compliance, equipment, all handled by Corbin. You get one simple invoice.',
       },
       {
         question: 'How fast can someone start?',
         answer:
-          '7\u201314 business days from our first call to a trained, onboarded team member working in your systems.',
+          '7 to 14 business days from our first call to a trained, onboarded team member working in your systems.',
       },
     ],
   },
@@ -304,7 +304,7 @@ export const roofingPageData: VerticalPageData = {
 
   seo: {
     title:
-      'Roofing Office Staffing | Corbin Staffing \u2014 Texas Roofing Conference 2026',
+      'Roofing Office Staffing for the Texas Roofing Conference 2026',
     description:
       'Trained CSRs, appointment setters, and back-office staff for roofing companies. Starting at $7/hr. We handle recruiting, payroll, HR, and compliance. Free replacement guarantee.',
     canonicalPath: '/roofing',
