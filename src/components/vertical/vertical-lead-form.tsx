@@ -24,7 +24,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { isEmailJsConfigured, sendEmail } from '@/lib/emailjs';
 import { saveLead } from '@/lib/leads/save-lead';
 import { FormHoneypot } from '@/components/landing/form-honeypot';
 import { FormDropdownOption } from '@/lib/vertical-page-data';
@@ -42,14 +41,12 @@ interface VerticalLeadFormProps {
   headline: string;
   submitText: string;
   dropdownOptions: FormDropdownOption[];
-  emailjsTemplateEnvVar: string;
 }
 
 export function VerticalLeadForm({
   headline,
   submitText,
   dropdownOptions,
-  emailjsTemplateEnvVar,
 }: VerticalLeadFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState('');
@@ -69,38 +66,15 @@ export function VerticalLeadForm({
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
 
-    // Durable record first, notification second.
+    // The API route stores the lead and sends the notification server-side.
     const saved = await saveLead(
       { formType: 'vertical', data: { ...data, source: 'roofing-landing-page' } },
       { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
     );
 
-    // Use the roofing template if configured, otherwise the consult template.
-    const templateId =
-      process.env.NEXT_PUBLIC_EMAILJS_ROOFING_FORM_TEMPLATE_ID ||
-      process.env.NEXT_PUBLIC_EMAILJS_BOOK_CONSULT_TEMPLATE_ID ||
-      '';
-
-    let emailed = false;
-    if (isEmailJsConfigured(templateId)) {
-      try {
-        await sendEmail(templateId, {
-          from_name: data.fullName,
-          company: data.company,
-          phone_number: data.mobileNumber,
-          role_needed: data.roleNeeded,
-          to_name: 'Corbin Staffing',
-          source: 'roofing-landing-page',
-        });
-        emailed = true;
-      } catch {
-        // Only surfaced below if the database write also failed.
-      }
-    }
-
     setIsSubmitting(false);
 
-    if (!saved.ok && !emailed) {
+    if (!saved.ok) {
       toast({
         title: 'Something went wrong',
         description: 'Please try again or contact us directly.',

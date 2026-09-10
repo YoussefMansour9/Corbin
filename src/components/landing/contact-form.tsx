@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { isEmailJsConfigured, sendEmail } from '@/lib/emailjs';
 import { saveLead } from '@/lib/leads/save-lead';
 import { hireSchema } from '@/lib/leads/schema';
 import { FormHoneypot } from '@/components/landing/form-honeypot';
@@ -18,8 +17,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = hireSchema;
-
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_HIRING_FORM_TEMPLATE_ID || '';
 
 export function ContactForm() {
   const { toast } = useToast();
@@ -48,40 +45,15 @@ export function ContactForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
 
-    // Durable record first, notification second.
+    // The API route stores the lead and sends the notification server-side.
     const saved = await saveLead(
       { formType: 'hire', data: values },
       { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
     );
 
-    let emailed = false;
-    if (isEmailJsConfigured(EMAILJS_TEMPLATE_ID)) {
-      try {
-        await sendEmail(EMAILJS_TEMPLATE_ID, {
-          from_name: values.fullName,
-          from_email: values.email,
-          business_name: values.businessName,
-          phone_number: values.phoneNumber,
-          business_website: values.businessWebsite,
-          job_title: values.jobTitle,
-          job_description: values.jobDescription,
-          essential_programs: values.essentialPrograms,
-          job_hours: values.jobHours,
-          additional_info: values.additionalInfo,
-          referring_agent: values.referringAgent,
-          workplace_preference: values.workplacePreference,
-          how_did_you_hear: values.howDidYouHear,
-          to_name: 'Corbin Staffing',
-        });
-        emailed = true;
-      } catch {
-        // Only surfaced below if the database write also failed.
-      }
-    }
-
     setIsSubmitting(false);
 
-    if (saved.ok || emailed) {
+    if (saved.ok) {
       toast({
         title: 'Form Submitted!',
         description: "Thank you for your inquiry. We'll be in touch within 24 hours.",

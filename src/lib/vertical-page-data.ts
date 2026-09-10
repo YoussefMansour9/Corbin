@@ -87,7 +87,6 @@ export interface VerticalPageData {
     headline: string;
     submitText: string;
     dropdownOptions: FormDropdownOption[];
-    emailjsTemplateEnvVar: string;
   };
 
   // SEO
@@ -299,7 +298,6 @@ export const roofingPageData: VerticalPageData = {
       { value: 'crm-production', label: 'CRM & production' },
       { value: 'something-else', label: 'Something else' },
     ],
-    emailjsTemplateEnvVar: 'NEXT_PUBLIC_EMAILJS_ROOFING_FORM_TEMPLATE_ID',
   },
 
   seo: {

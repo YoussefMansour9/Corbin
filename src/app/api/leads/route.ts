@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { leadRequestSchema, toLeadRow } from '@/lib/leads/schema';
 import { getSupabase, isSupabaseConfigured } from '@/lib/leads/supabase';
 import { getClientIp, hashIp } from '@/lib/leads/request-meta';
+import { notifyNewLead } from '@/lib/leads/notify';
 
 // Always run this fresh; nothing here is cacheable.
 export const dynamic = 'force-dynamic';
@@ -82,5 +83,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: 'insert_failed' }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, id: data.id });
+  // The lead is stored, so from here nothing can lose it. The notification is
+  // best effort, and its outcome is recorded on the row so a silent mail
+  // failure stays visible and can be retried from the dashboard.
+  const notified = await notifyNewLead(row, data.id);
+
+  const { error: updateError } = await supabase
+    .from('leads')
+    .update({
+      email_sent: notified.sent,
+      email_error: notified.sent ? null : notified.error ?? 'unknown',
+    })
+    .eq('id', data.id);
+
+  if (updateError) {
+    console.error('[leads] could not record notification status', updateError.message);
+  }
+  if (!notified.sent) {
+    console.error('[leads] notification failed for', data.id, notified.error);
+  }
+
+  return NextResponse.json({ ok: true, id: data.id, emailed: notified.sent });
 }

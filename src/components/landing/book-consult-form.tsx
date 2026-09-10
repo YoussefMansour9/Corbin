@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { isEmailJsConfigured, sendEmail } from '@/lib/emailjs';
 import { saveLead } from '@/lib/leads/save-lead';
 import { consultSchema } from '@/lib/leads/schema';
 import { FormHoneypot } from '@/components/landing/form-honeypot';
@@ -21,8 +20,6 @@ import { FormHoneypot } from '@/components/landing/form-honeypot';
 const formSchema = consultSchema;
 
 type FormValues = z.infer<typeof formSchema>;
-
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_BOOK_CONSULT_TEMPLATE_ID || '';
 
 const fields: { name: keyof FormValues; label: string; placeholder: string; type?: string; full?: boolean }[] = [
   { name: 'name', label: 'Name', placeholder: 'John Smith' },
@@ -51,35 +48,16 @@ export function BookConsultForm() {
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
 
-    // Save to the database first. This is the durable record, so an email
-    // failure can no longer lose the lead.
+    // The API route stores the lead and sends the notification server-side.
     const saved = await saveLead(
       { formType: 'consult', data: values },
       { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
     );
 
-    // Then the notification, which is how the team actually hears about it.
-    let emailed = false;
-    if (isEmailJsConfigured(EMAILJS_TEMPLATE_ID)) {
-      try {
-        await sendEmail(EMAILJS_TEMPLATE_ID, {
-          from_name: values.name,
-          from_email: values.email,
-          company_name: values.company,
-          phone_number: values.phone,
-          position_needed: values.position,
-          to_name: 'Corbin Staffing',
-        });
-        emailed = true;
-      } catch {
-        // Reported below only if the database write also failed.
-      }
-    }
-
     setIsSubmitting(false);
 
     // Only a genuine failure is one where neither path captured the lead.
-    if (saved.ok || emailed) {
+    if (saved.ok) {
       toast({
         title: 'Request Received',
         description: "Thanks for reaching out. We'll be in touch shortly to schedule your consultation.",
