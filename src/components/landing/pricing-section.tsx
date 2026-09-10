@@ -1,79 +1,73 @@
-import {
-  Briefcase,
-  Cog,
-  ShieldCheck,
-  Star,
-  Users,
-  Code,
-  Check,
-} from 'lucide-react';
+import Link from 'next/link';
+import { Check, Clock, ShieldCheck, TrendingUp, Users } from 'lucide-react';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
 const tiers = [
   {
-    name: 'Standard',
+    name: 'Call Coverage',
+    subtitle: 'After-Hours & Inbound Calls',
     price: '7',
-    priceId: 'standard',
+    priceId: 'call-coverage',
     priceSuffix: '/hour',
-    description:
-      'Reliable team members prepared to support daily operations, helping maintain efficiency, consistency, and smooth workflows.',
+    description: 'Dedicated team members for after-hours and inbound call coverage.',
     features: [
-      'Rate: Starting at $7/hour per employee for teams of 3 or more.',
-      'For fewer than 3 employees, the rate is $8/hour per employee.',
+      'After-hours call answering',
+      'Inbound calls',
+      'Message taking',
+      'Call routing',
+      'Appointment requests',
     ],
     popular: false,
   },
   {
-    name: 'Professional',
-    price: '9',
-    priceId: 'professional',
+    name: 'Standard VA',
+    subtitle: 'Administrative & Operational Support',
+    price: '8',
+    priceId: 'standard-va',
     priceSuffix: '/hour',
     description:
-      'Skilled employees with relevant experience who can work independently, solve problems, and contribute directly to operational success.',
-    features: ['Rate: Starting at $9/hour'],
+      'A dedicated team member to handle administrative, customer service, and operational tasks.',
+    features: [
+      'Administrative support',
+      'Customer service',
+      'CRM management',
+      'Scheduling & email management',
+      'Data entry & more',
+    ],
     popular: true,
   },
   {
-    name: 'Executive',
+    name: 'Specialized Talent',
+    subtitle: 'Skilled & Technical Roles',
     price: '11',
-    priceId: 'executive',
+    priceId: 'specialized-talent',
     priceSuffix: '/hour',
     description:
-      'Senior professionals with proven leadership experience, strategic oversight capabilities, and a track record of driving results. Ideal for high-impact roles requiring decision-making authority and minimal supervision.',
-    features: ['Rate: Starting at $11/hour'],
+      'Experienced professionals for roles requiring specialized skills or industry knowledge.',
+    features: [
+      'Technical & industry-specific roles',
+      'Advanced administrative support',
+      'Design, engineering & IT support',
+      'Accounting & bookkeeping',
+      'Leadership roles',
+    ],
     popular: false,
   },
 ];
 
-const specialTiers = [
-  {
-    name: 'Sales & Customer Service',
-    price: '$7/Hour',
-    description:
-      'Professional team members with fluent, clear, & neutral English, focused on building trust and ensuring client satisfaction.',
-  },
-  {
-    name: 'Software Developer',
-    price: 'Starting at $20/Hour',
-    description:
-      'Skilled professionals specializing in designing, building, and maintaining software solutions. Experienced in coding, debugging, and collaborating on projects to deliver high-quality, reliable applications. Ideal for companies needing technical expertise to support digital operations or custom development initiatives.',
-  },
-  {
-    name: 'Custom / Enterprise',
-    price: 'Flexible Pricing',
-    description:
-      'Tailored staffing solutions for larger teams or complex projects. Flexible pricing designed to meet your organization’s unique scale, needs, and operational goals.',
-  },
+const guarantees = [
+  { icon: Users, title: 'Flexible Team Sizes', description: 'Part-time or full-time.' },
+  { icon: Clock, title: 'Save on Overhead', description: 'No office space or benefits.' },
+  { icon: ShieldCheck, title: 'Vetted Talent', description: 'We recruit and screen for you.' },
+  { icon: TrendingUp, title: 'Scalable Solutions', description: 'Add team members as you grow.' },
 ];
 
 export function PricingSection() {
@@ -81,12 +75,12 @@ export function PricingSection() {
     <section id="pricing" className="py-20 md:py-28">
       <div className="container">
         <div className="mx-auto mb-12 max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Clear and Flexible Pricing
-          </h2>
+          <p className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-primary">Pricing</p>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+            Build Your Team for Less
+          </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            We offer a variety of plans to fit your specific needs, from
-            operational support to executive leadership.
+            Skilled remote team members. Flexible plans to fit your business needs.
           </p>
         </div>
 
@@ -107,6 +101,9 @@ export function PricingSection() {
               )}
               <CardHeader className="p-6">
                 <CardTitle className="text-2xl font-bold">{tier.name}</CardTitle>
+                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  {tier.subtitle}
+                </p>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col justify-between p-6 pt-0">
                 <div>
@@ -120,7 +117,7 @@ export function PricingSection() {
                   <ul className="space-y-3">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2">
-                        <Check className="h-5 w-5 text-primary" />
+                        <Check className="h-5 w-5 shrink-0 text-primary" />
                         <span className="text-muted-foreground">{feature}</span>
                       </li>
                     ))}
@@ -136,31 +133,19 @@ export function PricingSection() {
           ))}
         </div>
 
-        <div className="mx-auto mt-20 max-w-5xl">
-          <h3 className="text-center text-2xl font-bold tracking-tight">
-            Specialized Roles & Enterprise Solutions
-          </h3>
-          <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
-            {specialTiers.map((tier) => (
-              <Card key={tier.name} className="bg-card rounded-2xl flex flex-col">
-                <CardHeader>
-                  <CardTitle>{tier.name}</CardTitle>
-                  <div className="text-2xl font-bold text-primary">
-                    {tier.price}
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-muted-foreground">{tier.description}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild className="w-full">
-                    <Link href="/book-a-consult">Get Started</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <ul className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-8 border-t pt-10 sm:grid-cols-2 lg:grid-cols-4">
+          {guarantees.map((item) => (
+            <li key={item.title} className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <item.icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block font-bold">{item.title}</span>
+                <span className="block text-sm text-muted-foreground">{item.description}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
