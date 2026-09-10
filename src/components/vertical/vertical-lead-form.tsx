@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -24,6 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { isEmailJsConfigured, sendEmail } from '@/lib/emailjs';
+import { saveLead } from '@/lib/leads/save-lead';
+import { FormHoneypot } from '@/components/landing/form-honeypot';
 import { FormDropdownOption } from '@/lib/vertical-page-data';
 
 const formSchema = z.object({
@@ -49,6 +52,8 @@ export function VerticalLeadForm({
   emailjsTemplateEnvVar,
 }: VerticalLeadFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
+  const mountedAt = useRef(Date.now());
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -63,50 +68,54 @@ export function VerticalLeadForm({
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    try {
-      const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '';
-      const EMAILJS_ROOFING_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_ROOFING_FORM_TEMPLATE_ID || '';
-      const EMAILJS_CONSULT_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_BOOK_CONSULT_TEMPLATE_ID || '';
-      const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
 
-      // Use roofing template if available, fallback to consult template
-      const EMAILJS_TEMPLATE_ID = EMAILJS_ROOFING_TEMPLATE_ID || EMAILJS_CONSULT_TEMPLATE_ID;
+    // Durable record first, notification second.
+    const saved = await saveLead(
+      { formType: 'vertical', data: { ...data, source: 'roofing-landing-page' } },
+      { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
+    );
 
-      const templateParams = {
-        from_name: data.fullName,
-        company: data.company,
-        phone_number: data.mobileNumber,
-        role_needed: data.roleNeeded,
-        to_name: 'Corbin Staffing',
-        source: 'roofing-landing-page',
-      };
+    // Use the roofing template if configured, otherwise the consult template.
+    const templateId =
+      process.env.NEXT_PUBLIC_EMAILJS_ROOFING_FORM_TEMPLATE_ID ||
+      process.env.NEXT_PUBLIC_EMAILJS_BOOK_CONSULT_TEMPLATE_ID ||
+      '';
 
-      if ((window as any).emailjs) {
-        await (window as any).emailjs.send(
-          EMAILJS_SERVICE_ID,
-          EMAILJS_TEMPLATE_ID,
-          templateParams,
-          EMAILJS_PUBLIC_KEY
-        );
-      } else {
-        throw new Error('EmailJS not loaded');
+    let emailed = false;
+    if (isEmailJsConfigured(templateId)) {
+      try {
+        await sendEmail(templateId, {
+          from_name: data.fullName,
+          company: data.company,
+          phone_number: data.mobileNumber,
+          role_needed: data.roleNeeded,
+          to_name: 'Corbin Staffing',
+          source: 'roofing-landing-page',
+        });
+        emailed = true;
+      } catch {
+        // Only surfaced below if the database write also failed.
       }
+    }
 
+    setIsSubmitting(false);
+
+    if (!saved.ok && !emailed) {
       toast({
-        title: 'Success!',
-        description: 'Your request has been sent. We will contact you shortly.',
-      });
-      form.reset();
-    } catch (error) {
-      console.error('EmailJS Error:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to send your request. Please try again.',
+        title: 'Something went wrong',
+        description: 'Please try again or contact us directly.',
         variant: 'destructive',
       });
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
+
+    toast({
+      title: 'Success!',
+      description: 'Your request has been sent. We will contact you shortly.',
+    });
+    form.reset();
+    setHoneypot('');
+    mountedAt.current = Date.now();
   };
 
   return (
@@ -116,7 +125,8 @@ export function VerticalLeadForm({
         <div className="max-w-xl mx-auto mt-8">
           <div className="bg-card p-6 sm:p-8 rounded-lg border">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="relative space-y-6">
+                <FormHoneypot value={honeypot} onChange={setHoneypot} />
                 <FormField
                   control={form.control}
                   name="fullName"
