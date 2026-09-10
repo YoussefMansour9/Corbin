@@ -82,12 +82,21 @@ export default function RoofingPage() {
 
       <VerticalHero
         headline={data.hero.headline}
-        subheadline={data.hero.subheadline}
         ctaText={data.hero.ctaText}
         ctaLink={data.hero.ctaLink}
         backgroundImage={data.hero.backgroundImage}
         backgroundImageAlt={data.hero.backgroundImageAlt}
       />
+
+      {/* Moved out of the hero: over the banner it competed with the
+          artwork, and it reads better as the page's opening statement. */}
+      <section className="py-12 md:py-16">
+        <div className="container">
+          <p className="mx-auto max-w-3xl text-center text-lg leading-relaxed text-muted-foreground md:text-xl">
+            {data.hero.subheadline}
+          </p>
+        </div>
+      </section>
 
       <VerticalProblem
         headline={data.problem.headline}

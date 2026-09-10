@@ -107,7 +107,7 @@ export const roofingPageData: VerticalPageData = {
   slug: 'roofing',
 
   hero: {
-    headline: 'Visit us at the 2026 Texas Roofing Conference.',
+    headline: 'Visit us at',
     subheadline:
       'Trained CSRs and appointment setters who work your hours in your CRM. We handle recruiting, payroll, HR, and compliance. If someone isn\u2019t the right fit, we replace them free.',
     ctaText: 'Book a 15-Minute Call',
