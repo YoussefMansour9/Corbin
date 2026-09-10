@@ -8,15 +8,14 @@ import { VerticalHowItWorks } from '@/components/vertical/vertical-how-it-works'
 import { VerticalFAQ } from '@/components/vertical/vertical-faq';
 import { CalendlyEmbed } from '@/components/vertical/calendly-embed';
 import { StickyMobileCTA } from '@/components/vertical/sticky-mobile-cta';
+import { JsonLd, breadcrumbSchema, graph, serviceSchema } from '@/components/seo/json-ld';
 
 const data = roofingPageData;
 
 export const metadata: Metadata = {
   title: data.seo.title,
   description: data.seo.description,
-  alternates: {
-    canonical: data.seo.canonicalPath,
-  },
+  alternates: { canonical: data.seo.canonicalPath },
   openGraph: {
     title: data.seo.title,
     description: data.seo.description,
@@ -65,6 +64,21 @@ export default function RoofingPage() {
   return (
     <>
       <FAQJsonLd />
+
+      <JsonLd
+        data={graph(
+          breadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Roofing Office Staffing', path: '/roofing' },
+          ]),
+          serviceSchema({
+            name: 'Roofing Office Staffing',
+            description: data.seo.description,
+            path: '/roofing',
+            serviceType: 'Staffing',
+          })
+        )}
+      />
 
       <VerticalHero
         headline={data.hero.headline}

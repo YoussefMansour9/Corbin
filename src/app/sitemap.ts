@@ -1,25 +1,32 @@
 import type { MetadataRoute } from 'next';
+import { industries } from '@/lib/industries-data';
+
+const baseUrl = 'https://corbinstaffing.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://corbinstaffing.com';
-
-  const routes = [
+  const staticRoutes = [
     '',
-    '/about',
+    '/industries',
+    '/after-hours',
+    '/how-it-works',
     '/pricing',
-    '/services',
     '/team',
+    '/results',
+    '/about',
+    '/meet-corbin-talent',
     '/locations',
+    '/security',
     '/contact',
     '/book-a-consult',
-    '/how-it-works',
     '/roofing',
   ];
 
-  return routes.map((route) => ({
+  const industryRoutes = industries.map((industry) => `/industries/${industry.slug}`);
+
+  return [...staticRoutes, ...industryRoutes].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: route === '/roofing' ? 'weekly' : 'monthly',
-    priority: route === '' ? 1 : route === '/roofing' ? 0.9 : 0.8,
+    priority: route === '' ? 1 : route === '/roofing' || route === '/after-hours' ? 0.9 : 0.8,
   }));
 }
