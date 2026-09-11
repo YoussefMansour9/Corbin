@@ -11,7 +11,8 @@ const steps = [
     icon: <User className="w-8 h-8 text-primary" />,
     title: 'Meet Candidates',
     number: '2',
-    description: 'We recruit, screen, and present qualified options.',
+    description:
+      'We recruit, screen, and record interviews for your review. Choose the best candidates and hire right away, or run your own interview if you prefer.',
   },
   {
     icon: <Headset className="w-8 h-8 text-primary" />,

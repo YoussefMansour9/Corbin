@@ -12,8 +12,7 @@ export function Footer() {
           <div className="space-y-5">
             <Logo />
             <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Vetted remote staff for U.S. businesses. Call coverage from $7/hour, standard VAs from
-              $8/hour, specialized talent from $11/hour.
+              Vetted remote staff for U.S. businesses, starting at $7/hour.
             </p>
 
             <div className="space-y-2.5">

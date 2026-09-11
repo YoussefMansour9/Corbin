@@ -42,6 +42,7 @@ export const mainNav: NavItem[] = [
   { href: '/pricing', label: 'Pricing' },
   { href: '/team', label: 'Our Team' },
   { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact Us' },
 ];
 
 /** Rendered as the header call to action, and last in the mobile sheet. */
@@ -81,7 +82,7 @@ export const footerNav: { heading: string; links: NavLink[] }[] = [
     links: [
       { href: '/book-a-consult', label: 'Book a Consultation' },
       { href: '/contact', label: 'Ready to Hire' },
-      { href: 'mailto:info@corbinstaffing.com', label: 'Contact' },
+      { href: 'mailto:info@corbinstaffing.com', label: 'Email Us' },
     ],
   },
 ];
@@ -93,5 +94,4 @@ export const secondaryNav: NavLink[] = [
   { href: '/meet-corbin-talent', label: 'Meet Corbin Talent' },
   { href: '/locations', label: 'Locations' },
   { href: '/security', label: 'Security & Compliance' },
-  { href: '/contact', label: 'Ready to Hire' },
 ];

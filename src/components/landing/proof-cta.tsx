@@ -18,8 +18,9 @@ export function ProofCta() {
               Real People, in a Real Office
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              Corbin staff work from our managed offices, not as unknown freelancers from uncontrolled
-              locations. That is what makes coverage consistent and accountability possible.
+              Most Corbin staff work from our managed offices, not as unknown freelancers from
+              uncontrolled locations. For select roles they can work from home, depending on what your
+              business needs.
             </p>
 
             {testimonials.length > 0 ? (
@@ -40,7 +41,7 @@ export function ProofCta() {
             ) : (
               <ul className="mt-8 grid grid-cols-3 gap-4">
                 {[
-                  { value: '80+', label: 'people on our team' },
+                  { value: 'In office', label: 'for most roles' },
                   { value: '$7', label: 'per hour to start' },
                   { value: 'Free', label: 'replacements' },
                 ].map((stat) => (
@@ -68,6 +69,7 @@ export function ProofCta() {
               playsInline
               preload="metadata"
               src="/videos/location-2.mp4"
+              poster="/images/office/office-team.jpg"
               className="aspect-video w-full bg-muted object-cover"
             >
               Your browser does not support the video tag.

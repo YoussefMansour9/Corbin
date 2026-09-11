@@ -7,7 +7,7 @@ import { ClosingCta } from '@/components/shared/closing-cta';
  * it is stripped back: three proof points, the office, the story, the mission.
  */
 const proofPoints = [
-  { value: '80+', label: 'people on our own team today' },
+  { value: 'In office', label: 'for most roles, not scattered freelancers' },
   { value: '3', label: 'people when we started, in a private home' },
   { value: '$7', label: 'per hour to start with Corbin' },
 ];
@@ -65,6 +65,7 @@ export function AboutStory() {
                 playsInline
                 preload="metadata"
                 src="/videos/location-1.mp4"
+                poster="/images/office/office-floor.jpg"
                 className="aspect-video w-full bg-muted object-cover"
               >
                 Your browser does not support the video tag.

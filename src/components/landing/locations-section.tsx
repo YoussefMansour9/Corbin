@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 interface Location {
   title: string;
   videoUrl: string;
+  /** First frame shown before playback; the raw frame is a poor thumbnail. */
+  poster?: string;
   /**
    * Real office photos. Drop files in /public/images/offices and list them
    * here; the gallery below renders automatically once the array is filled.
@@ -14,8 +16,8 @@ interface Location {
 }
 
 const locations: Location[] = [
-  { title: 'Antique, Philippines 1', videoUrl: '/videos/location-1.mp4', photos: [] },
-  { title: 'Antique, Philippines 2', videoUrl: '/videos/location-2.mp4', photos: [] },
+  { title: 'Antique, Philippines 1', videoUrl: '/videos/location-1.mp4', poster: '/images/office/office-floor.jpg', photos: [] },
+  { title: 'Antique, Philippines 2', videoUrl: '/videos/location-2.mp4', poster: '/images/office/office-team.jpg', photos: [] },
 ];
 
 export function LocationsSection() {
@@ -39,6 +41,7 @@ export function LocationsSection() {
                   playsInline
                   preload="metadata"
                   src={location.videoUrl}
+                  poster={location.poster}
                   className="aspect-video w-full bg-muted object-cover"
                 >
                   Your browser does not support the video tag.
