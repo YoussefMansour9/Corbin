@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button';
 import { industries } from '@/lib/industries-data';
 import { IndustryIcon } from '@/components/industries/industry-icon';
 
+/**
+ * Section 5 of the home page. The guide caps this at six to eight cards; the
+ * full set of nine lives on /industries.
+ */
+const featured = industries.slice(0, 8);
+
 export function IndustriesPreview() {
   return (
     <section id="industries" className="py-16 md:py-24">
@@ -11,30 +17,26 @@ export function IndustriesPreview() {
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Industries We Staff</h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            We recruit for the roles your business actually runs on. Pick your industry to see the positions
-            we fill most often.
+            Pick your industry to see the roles we fill and the software they already know.
           </p>
-          <div className="mx-auto mt-4 h-1.5 w-24 rounded-full bg-primary" />
         </div>
 
-        <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {industries.map((industry) => (
+        <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {featured.map((industry) => (
             <li key={industry.slug}>
               <Link
                 href={`/industries/${industry.slug}`}
-                className="group flex h-full items-start gap-4 rounded-2xl border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
+                className="group flex h-full flex-col rounded-2xl border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <IndustryIcon name={industry.icon} className="h-5 w-5" />
                 </span>
-                <span className="min-w-0">
-                  <span className="flex items-center gap-1.5 font-bold">
-                    {industry.name}
-                    <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
-                  </span>
-                  <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
-                    {industry.blurb}
-                  </span>
+                <span className="mt-4 flex items-center gap-1.5 font-bold">
+                  {industry.name}
+                  <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
+                </span>
+                <span className="mt-2 text-sm leading-snug text-muted-foreground">
+                  {industry.cardTasks.slice(0, 3).join(' · ')}
                 </span>
               </Link>
             </li>

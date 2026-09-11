@@ -3,21 +3,21 @@ import { GraduationCap, User, Headset } from 'lucide-react';
 const steps = [
   {
     icon: <GraduationCap className="w-8 h-8 text-primary" />,
-    title: 'Select',
+    title: 'Tell Us',
     number: '1',
-    description: 'We build a custom pool of candidates based on your exact needs. You share your requirements, and we handle the rest.',
+    description: 'Share the role, schedule, skills, and software you need.',
   },
   {
     icon: <User className="w-8 h-8 text-primary" />,
-    title: 'Interview',
+    title: 'Meet Candidates',
     number: '2',
-    description: 'Review candidates on your schedule with our pre-recorded interviews. See their skills, personality, and communication before you decide.',
+    description: 'We recruit, screen, and present qualified options.',
   },
   {
     icon: <Headset className="w-8 h-8 text-primary" />,
-    title: 'Hire',
+    title: 'Choose Your Hire',
     number: '3',
-    description: 'Select your ideal candidate and we’ll have them onboarded and ready to work U.S. hours or any time zone that fits your business.',
+    description: 'Interview your favorites and select the right fit.',
   },
 ];
 
@@ -30,7 +30,7 @@ export function HowItWorksSection({ asPageHeading = false }: { asPageHeading?: b
         <div className="text-center max-w-3xl mx-auto mb-24">
           <Heading className="text-3xl font-bold tracking-tight sm:text-4xl">How It Works</Heading>
           <p className="mt-4 text-lg text-muted-foreground">
-            Let Us Find The Right Employees For Your Needs
+            Three steps from telling us what you need to your new hire starting.
           </p>
           <div className="mt-4 mx-auto h-1.5 w-24 bg-primary rounded-full" />
         </div>

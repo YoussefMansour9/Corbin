@@ -17,14 +17,8 @@ const tiers = [
     price: '7',
     priceId: 'call-coverage',
     priceSuffix: '/hour',
-    description: 'Dedicated team members for after-hours and inbound call coverage.',
-    features: [
-      'After-hours call answering',
-      'Inbound calls',
-      'Message taking',
-      'Call routing',
-      'Appointment requests',
-    ],
+    description: 'After-hours and inbound call support.',
+    features: ['After-hours calls', 'Inbound calls', 'Message taking', 'Call routing'],
     popular: false,
   },
   {
@@ -33,32 +27,18 @@ const tiers = [
     price: '8',
     priceId: 'standard-va',
     priceSuffix: '/hour',
-    description:
-      'A dedicated team member to handle administrative, customer service, and operational tasks.',
-    features: [
-      'Administrative support',
-      'Customer service',
-      'CRM management',
-      'Scheduling & email management',
-      'Data entry & more',
-    ],
+    description: 'Your everyday remote team member.',
+    features: ['Admin support', 'Customer service', 'CRM & scheduling', 'Data entry & more'],
     popular: true,
   },
   {
     name: 'Specialized Talent',
     subtitle: 'Skilled & Technical Roles',
-    price: '11',
+    price: '11+',
     priceId: 'specialized-talent',
     priceSuffix: '/hour',
-    description:
-      'Experienced professionals for roles requiring specialized skills or industry knowledge.',
-    features: [
-      'Technical & industry-specific roles',
-      'Advanced administrative support',
-      'Design, engineering & IT support',
-      'Accounting & bookkeeping',
-      'Leadership roles',
-    ],
+    description: 'Advanced or technical professionals.',
+    features: ['IT & technical', 'CAD / engineering', 'Accounting', 'Senior roles'],
     popular: false,
   },
 ];
@@ -80,7 +60,8 @@ export function PricingSection() {
             Build Your Team for Less
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Skilled remote team members. Flexible plans to fit your business needs.
+            Three options. Call coverage answers your phones. A standard VA runs your day to day.
+            Specialized talent handles the technical work.
           </p>
         </div>
 
@@ -132,6 +113,11 @@ export function PricingSection() {
             </Card>
           ))}
         </div>
+
+        <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
+          Rates start at these prices and vary with the role, experience, schedule and
+          responsibilities.
+        </p>
 
         <ul className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-8 border-t pt-10 sm:grid-cols-2 lg:grid-cols-4">
           {guarantees.map((item) => (

@@ -10,7 +10,13 @@ export interface Industry {
   /** lucide-react icon name, resolved in the industry card component. */
   icon: string;
   blurb: string;
+  /** One-line hero subhead on the industry page. */
+  heroLine: string;
+  /** Short task labels for the index card, scannable in a couple of seconds. */
+  cardTasks: string[];
   popularRoles: string[];
+  commonTasks: string[];
+  commonSoftware: string[];
   subIndustries?: SubIndustry[];
 }
 
@@ -21,6 +27,15 @@ export const industries: Industry[] = [
     icon: 'Home',
     blurb:
       'Remote staff for roofing, HVAC, plumbing, electrical and construction businesses that cannot afford to miss a call.',
+    heroLine:
+      'Keep your phones answered, leads moving, and office organized, without adding high local overhead.',
+    cardTasks: [
+      'Calls',
+      'Dispatch',
+      'Scheduling',
+      'Lead follow-up',
+      'Admin',
+    ],
     popularRoles: [
       'Customer Service Representative',
       'After-Hours Call Agent',
@@ -30,6 +45,22 @@ export const industries: Industry[] = [
       'Estimating Assistant',
       'CRM Specialist',
       'Administrative Assistant',
+    ],
+    commonTasks: [
+      'Answer calls',
+      'Schedule jobs',
+      'Update CRM',
+      'Follow up leads',
+      'Confirm appointments',
+      'Admin support',
+    ],
+    commonSoftware: [
+      'ServiceTitan',
+      'Jobber',
+      'Housecall Pro',
+      'JobNimbus',
+      'AccuLynx',
+      'Google Workspace',
     ],
     subIndustries: [
       {
@@ -76,6 +107,15 @@ export const industries: Industry[] = [
     icon: 'FileSpreadsheet',
     blurb:
       'Administrative, billing and bookkeeping support that keeps daily operations moving without adding headcount locally.',
+    heroLine:
+      'Keep invoicing, records, and daily admin moving without adding headcount locally.',
+    cardTasks: [
+      'Admin',
+      'Data entry',
+      'Billing',
+      'Bookkeeping',
+      'Operations',
+    ],
     popularRoles: [
       'Administrative Assistant',
       'Executive Assistant',
@@ -86,6 +126,22 @@ export const industries: Industry[] = [
       'Operations Assistant',
       'Document Processing Specialist',
     ],
+    commonTasks: [
+      'Data entry',
+      'Invoice processing',
+      'Expense tracking',
+      'Document management',
+      'Payroll support',
+      'Reporting',
+    ],
+    commonSoftware: [
+      'QuickBooks',
+      'Xero',
+      'Bill.com',
+      'Microsoft Excel',
+      'Google Workspace',
+      'Dropbox',
+    ],
   },
   {
     slug: 'real-estate',
@@ -93,6 +149,14 @@ export const industries: Industry[] = [
     icon: 'Building2',
     blurb:
       'Leasing, transaction and property management support for brokerages, investors and property managers.',
+    heroLine:
+      'Keep listings, leases, and transactions moving while your agents stay in the field.',
+    cardTasks: [
+      'Leasing',
+      'Property management',
+      'Transactions',
+      'Lead follow-up',
+    ],
     popularRoles: [
       'Real Estate Virtual Assistant',
       'Leasing Assistant',
@@ -103,22 +167,21 @@ export const industries: Industry[] = [
       'Transaction Coordinator',
       'CRM Specialist',
     ],
-  },
-  {
-    slug: 'design-engineering',
-    name: 'Design & Engineering',
-    icon: 'DraftingCompass',
-    blurb:
-      'Drafting and project coordination talent experienced in AutoCAD, Revit and document control workflows.',
-    popularRoles: [
-      'CAD Drafter',
-      'AutoCAD Specialist',
-      'Revit Specialist',
-      'Architectural Drafter',
-      'Engineering Assistant',
-      'Project Coordinator',
-      'Estimating Assistant',
-      'Document Control Specialist',
+    commonTasks: [
+      'Follow up leads',
+      'Coordinate showings',
+      'Prepare listings',
+      'Track transactions',
+      'Tenant communication',
+      'Update CRM',
+    ],
+    commonSoftware: [
+      'AppFolio',
+      'Buildium',
+      'Yardi',
+      'Follow Up Boss',
+      'kvCORE',
+      'DocuSign',
     ],
   },
   {
@@ -127,6 +190,15 @@ export const industries: Industry[] = [
     icon: 'Headset',
     blurb:
       'Phone, chat and email support professionals who represent your brand across U.S. and after-hours schedules.',
+    heroLine:
+      'Answer every call, email, and chat with people trained on your product and your tone.',
+    cardTasks: [
+      'Inbound calls',
+      'Email',
+      'Chat',
+      'Scheduling',
+      'Support',
+    ],
     popularRoles: [
       'Customer Service Representative',
       'Inbound Call Agent',
@@ -137,6 +209,22 @@ export const industries: Industry[] = [
       'Customer Follow-Up Specialist',
       'Help Desk Representative',
     ],
+    commonTasks: [
+      'Answer inbound calls',
+      'Respond to email',
+      'Handle live chat',
+      'Schedule appointments',
+      'Log tickets',
+      'Follow up with customers',
+    ],
+    commonSoftware: [
+      'Zendesk',
+      'Freshdesk',
+      'Intercom',
+      'HubSpot',
+      'Gorgias',
+      'Slack',
+    ],
   },
   {
     slug: 'it-managed-services',
@@ -144,6 +232,14 @@ export const industries: Industry[] = [
     icon: 'ServerCog',
     blurb:
       'Service desk and technical support staff who work your ticketing queue and escalation procedures.',
+    heroLine:
+      'Cover your service desk and ticket queue with staff trained on your escalation rules.',
+    cardTasks: [
+      'Help desk',
+      'Technical support',
+      'Ticketing',
+      'IT coordination',
+    ],
     popularRoles: [
       'IT Support Specialist',
       'Help Desk Technician',
@@ -154,6 +250,64 @@ export const industries: Industry[] = [
       'Network Support Assistant',
       'IT Coordinator',
     ],
+    commonTasks: [
+      'Triage tickets',
+      'First-line support',
+      'Escalate issues',
+      'Account provisioning',
+      'Document resolutions',
+      'Monitor alerts',
+    ],
+    commonSoftware: [
+      'ConnectWise',
+      'Autotask',
+      'Freshservice',
+      'Jira Service Management',
+      'NinjaOne',
+      'Microsoft 365',
+    ],
+  },
+  {
+    slug: 'design-engineering',
+    name: 'Design & Engineering',
+    icon: 'DraftingCompass',
+    blurb:
+      'Drafting and project coordination talent experienced in AutoCAD, Revit and document control workflows.',
+    heroLine:
+      'Add drafting and project coordination capacity without expanding your studio.',
+    cardTasks: [
+      'CAD',
+      'Revit',
+      'Drafting',
+      'Estimating',
+      'Project support',
+    ],
+    popularRoles: [
+      'CAD Drafter',
+      'AutoCAD Specialist',
+      'Revit Specialist',
+      'Architectural Drafter',
+      'Engineering Assistant',
+      'Project Coordinator',
+      'Estimating Assistant',
+      'Document Control Specialist',
+    ],
+    commonTasks: [
+      'Produce drawings',
+      'Model in BIM',
+      'Prepare submittals',
+      'Take-offs and estimates',
+      'Document control',
+      'Project coordination',
+    ],
+    commonSoftware: [
+      'AutoCAD',
+      'Revit',
+      'SketchUp',
+      'Bluebeam',
+      'Procore',
+      'Navisworks',
+    ],
   },
   {
     slug: 'professional-services',
@@ -161,6 +315,15 @@ export const industries: Industry[] = [
     icon: 'Briefcase',
     blurb:
       'Client intake, executive support and research talent for firms that bill for their time.',
+    heroLine:
+      'Give your billable team back the hours they lose to intake, scheduling, and admin.',
+    cardTasks: [
+      'Executive support',
+      'Intake',
+      'Research',
+      'Billing',
+      'CRM',
+    ],
     popularRoles: [
       'Executive Assistant',
       'Administrative Assistant',
@@ -171,6 +334,22 @@ export const industries: Industry[] = [
       'CRM Specialist',
       'Client Support Representative',
     ],
+    commonTasks: [
+      'Client intake',
+      'Calendar management',
+      'Research and summaries',
+      'Prepare invoices',
+      'Maintain CRM',
+      'Client follow-up',
+    ],
+    commonSoftware: [
+      'Clio',
+      'HubSpot',
+      'Salesforce',
+      'Microsoft 365',
+      'Calendly',
+      'DocuSign',
+    ],
   },
   {
     slug: 'insurance',
@@ -178,6 +357,14 @@ export const industries: Industry[] = [
     icon: 'ShieldCheck',
     blurb:
       'Policy administration, claims support and renewal follow-up for agencies and carriers.',
+    heroLine:
+      'Keep policies, renewals, and claims support moving through your agency.',
+    cardTasks: [
+      'Customer support',
+      'Policy admin',
+      'Claims support',
+      'Renewals',
+    ],
     popularRoles: [
       'Insurance Virtual Assistant',
       'Customer Service Representative',
@@ -188,6 +375,22 @@ export const industries: Industry[] = [
       'Data Entry Specialist',
       'Renewal Support Assistant',
     ],
+    commonTasks: [
+      'Process policy changes',
+      'Prepare quotes',
+      'Support claims',
+      'Chase renewals',
+      'Update records',
+      'Follow up leads',
+    ],
+    commonSoftware: [
+      'Applied Epic',
+      'AMS360',
+      'EZLynx',
+      'HawkSoft',
+      'Salesforce',
+      'Microsoft 365',
+    ],
   },
   {
     slug: 'restaurants',
@@ -195,6 +398,14 @@ export const industries: Industry[] = [
     icon: 'UtensilsCrossed',
     blurb:
       'Reservation, catering and customer feedback support that takes admin work off your managers.',
+    heroLine:
+      'Take reservations, catering enquiries, and admin off your managers.',
+    cardTasks: [
+      'Reservations',
+      'Catering',
+      'Customer support',
+      'Admin',
+    ],
     popularRoles: [
       'Phone & Reservation Agent',
       'Catering Coordinator',
@@ -204,6 +415,22 @@ export const industries: Industry[] = [
       'Online Order Support',
       'Review & Customer Feedback Specialist',
       'Data Entry Specialist',
+    ],
+    commonTasks: [
+      'Take reservations',
+      'Handle catering enquiries',
+      'Answer customer questions',
+      'Manage online orders',
+      'Respond to reviews',
+      'Vendor coordination',
+    ],
+    commonSoftware: [
+      'OpenTable',
+      'Toast',
+      'Resy',
+      'Square',
+      'DoorDash',
+      'Google Workspace',
     ],
   },
 ];

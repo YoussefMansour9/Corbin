@@ -1,26 +1,39 @@
 import Link from 'next/link';
 import { Facebook, Linkedin, Mail, MapPin } from 'lucide-react';
 import { Logo } from '@/components/landing/logo';
-import { industries } from '@/lib/industries-data';
-import { mainNav, primaryCta, secondaryNav } from '@/lib/site-nav';
-
-const companyLinks = [
-  ...mainNav.filter((item) => item.href !== '/'),
-  primaryCta,
-];
+import { footerNav } from '@/lib/site-nav';
 
 export function Footer() {
   return (
     <footer className="border-t bg-card">
       <div className="container py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
-          <div className="space-y-4">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)]">
+          {/* Brand and contact */}
+          <div className="space-y-5">
             <Logo />
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Finding skilled employees shouldn't be expensive or complicated. Let us find the right
-              professionals for your needs.
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Vetted remote staff for U.S. businesses. Call coverage from $7/hour, standard VAs from
+              $8/hour, specialized talent from $11/hour.
             </p>
+
+            <div className="space-y-2.5">
+              <a
+                href="mailto:info@corbinstaffing.com"
+                className="flex items-start gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>info@corbinstaffing.com</span>
+              </a>
+              <address className="flex items-start gap-2 text-sm not-italic text-muted-foreground">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>
+                  1108 Kane Concourse, STE 311,
+                  <br />
+                  Bay Harbor Islands, FL 33154
+                </span>
+              </address>
+            </div>
+
             <div className="flex items-center gap-2">
               <a
                 href="https://www.facebook.com/share/1LKHR1dMGb/?mibextid=wwXIfr"
@@ -43,73 +56,25 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Company */}
-          <nav aria-label="Footer company links" className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider">Company</h2>
-            <ul className="space-y-2.5">
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Industries */}
-          <nav aria-label="Footer industry links" className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider">Industries</h2>
-            <ul className="space-y-2.5">
-              {industries.map((industry) => (
-                <li key={industry.slug}>
-                  <Link
-                    href={`/industries/${industry.slug}`}
-                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    {industry.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Contact */}
-          <div className="space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wider">Get in Touch</h2>
-            <ul className="space-y-2.5">
-              {secondaryNav.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <div className="space-y-3 pt-2">
-              <a
-                href="mailto:info@corbinstaffing.com"
-                className="flex items-start gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <Mail className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>info@corbinstaffing.com</span>
-              </a>
-              <address className="flex items-start gap-2 text-sm not-italic text-muted-foreground">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>
-                  1108 Kane Concourse, STE 311,
-                  <br />
-                  Bay Harbor Island, FL 33154
-                </span>
-              </address>
-            </div>
+          {/* Link columns, grouped exactly as the revamp guide specifies. */}
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+            {footerNav.map((column) => (
+              <nav key={column.heading} aria-label={`Footer ${column.heading} links`}>
+                <h2 className="text-sm font-bold uppercase tracking-wider">{column.heading}</h2>
+                <ul className="mt-4 space-y-2.5">
+                  {column.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
           </div>
         </div>
 

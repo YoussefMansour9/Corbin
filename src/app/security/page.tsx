@@ -1,4 +1,4 @@
-import { ArrowRight, Building, FileLock2, KeyRound, LockKeyhole, ShieldCheck, UserMinus } from 'lucide-react';
+import { ArrowRight, FileLock2, KeyRound, LockKeyhole, ShieldCheck, UserMinus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageHero } from '@/components/shared/page-hero';
 import { ClosingCta } from '@/components/shared/closing-cta';
@@ -15,39 +15,33 @@ export const metadata = pageMetadata({
 const pillars = [
   {
     icon: ShieldCheck,
-    title: 'Background-Checked & Vetted Professionals',
+    title: 'Vetting',
     description:
       "Candidates go through Corbin's screening and vetting process before being presented to clients. Background checks can be incorporated based on the position and client requirements.",
   },
   {
     icon: FileLock2,
-    title: 'Confidentiality & NDAs',
+    title: 'Confidentiality',
     description:
       'Corbin team members are required to follow confidentiality obligations designed to protect client information, internal processes, customer data, and other sensitive business information. Client-specific NDAs and confidentiality requirements can also be incorporated when needed.',
   },
   {
     icon: LockKeyhole,
-    title: 'Controlled System Access',
+    title: 'Access Controls',
     description:
       'We encourage clients to follow the principle of least privilege, giving each team member access only to the systems and information necessary to perform their job. Access can be adjusted or removed as responsibilities change.',
   },
   {
     icon: KeyRound,
-    title: 'Secure Password Practices',
+    title: 'Secure Practices',
     description:
-      "Businesses should never need to freely share master passwords with remote employees. We support the use of business password managers, individual user accounts, multi-factor authentication, and role-based permissions whenever supported by the client's systems.",
+      "Businesses should never need to freely share master passwords with remote employees. We support business password managers, individual user accounts, multi-factor authentication, and role-based permissions wherever the client's systems allow. Corbin professionals also work from a managed office rather than uncontrolled locations.",
   },
   {
     icon: UserMinus,
-    title: 'Employee Offboarding',
+    title: 'Offboarding',
     description:
       'When an employee leaves a position, Corbin works with the client to ensure an organized transition. Clients are encouraged to immediately revoke system access, disable individual accounts, rotate shared credentials where necessary, and recover or secure company information.',
-  },
-  {
-    icon: Building,
-    title: 'Dedicated Office Environment',
-    description:
-      'Corbin professionals can work within a managed office environment rather than operating as unknown freelancers from uncontrolled locations. This provides businesses with greater visibility, accountability, and operational oversight.',
   },
 ];
 

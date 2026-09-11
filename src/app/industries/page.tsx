@@ -37,7 +37,7 @@ export default function IndustriesPage() {
       <PageHero
         eyebrow="Industries"
         headline="Remote Staff Built Around Your Industry"
-        body="We recruit for the roles your business actually runs on. Pick your industry to see the positions Corbin fills most often."
+        body="Pick your industry to see the roles we fill, the tasks they cover, and the software they already know."
         primaryCta={{ href: '/book-a-consult', label: 'Book a Free Consultation' }}
         secondaryCta={{ href: '/pricing', label: 'View Pricing' }}
       />

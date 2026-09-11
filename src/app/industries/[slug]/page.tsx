@@ -6,7 +6,12 @@ import { getIndustry, industries } from '@/lib/industries-data';
 import { IndustryIcon } from '@/components/industries/industry-icon';
 import { PageHero } from '@/components/shared/page-hero';
 import { ClosingCta } from '@/components/shared/closing-cta';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { JsonLd, breadcrumbSchema, graph, serviceSchema } from '@/components/seo/json-ld';
 import { pageMetadata } from '@/lib/seo';
 
@@ -25,9 +30,28 @@ export async function generateMetadata({
 
   return pageMetadata({
     title: `${industry.name} Staffing`,
-    description: `${industry.blurb} Popular roles include ${industry.popularRoles.slice(0, 3).join(', ')}.`,
+    description: `${industry.heroLine} Popular roles include ${industry.popularRoles
+      .slice(0, 3)
+      .join(', ')}.`,
     path: `/industries/${industry.slug}`,
   });
+}
+
+/** One column of short labels. Used for roles, tasks and software alike. */
+function LabelColumn({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div>
+      <h2 className="text-xs font-bold uppercase tracking-wider text-primary">{title}</h2>
+      <ul className="mt-4 space-y-2.5">
+        {items.map((item) => (
+          <li key={item} className="flex items-start gap-2.5">
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <span className="text-sm leading-snug">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default async function IndustryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -48,7 +72,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           ]),
           serviceSchema({
             name: `${industry.name} Remote Staffing`,
-            description: industry.blurb,
+            description: industry.heroLine,
             path: `/industries/${industry.slug}`,
             serviceType: 'Staffing',
           }),
@@ -66,71 +90,57 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
 
       <PageHero
         eyebrow="Industries"
-        headline={`${industry.name} Staffing`}
-        body={industry.blurb}
-        primaryCta={{ href: '/book-a-consult', label: 'Book a Free Consultation' }}
-        secondaryCta={{ href: '/contact', label: 'Ready to Hire' }}
+        headline={`Remote Staffing for ${industry.name}`}
+        body={industry.heroLine}
+        primaryCta={{ href: '/book-a-consult', label: 'Book a Consultation' }}
       />
 
-      {/* Popular roles */}
+      {/* Roles, tasks and software: the three things a prospect checks. */}
       <section className="py-16 md:py-20">
         <div className="container">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">Popular Roles</h2>
-            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {industry.popularRoles.map((role) => (
-                <div
-                  key={role}
-                  className="flex items-start gap-3 rounded-xl border bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
-                >
-                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-                  <span className="text-sm font-medium leading-snug">{role}</span>
-                </div>
-              ))}
-            </div>
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 rounded-2xl border bg-card p-8 shadow-sm md:grid-cols-3 md:gap-8">
+            <LabelColumn title="Popular Roles" items={industry.popularRoles} />
+            <LabelColumn title="Common Tasks" items={industry.commonTasks} />
+            <LabelColumn title="Common Software" items={industry.commonSoftware} />
           </div>
         </div>
       </section>
 
-      {/* Sub-industries, currently only Home Services */}
-      {industry.subIndustries && (
-        <section className="border-y bg-muted/40 py-16 md:py-24">
-          <div className="container">
-            <div className="mx-auto max-w-3xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                {industry.name} We Support
-              </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                Every trade runs a little differently. Here is what a Corbin team member handles in yours.
-              </p>
-            </div>
-
-            <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {industry.subIndustries.map((sub) => (
-                <Card
-                  key={sub.slug}
-                  id={sub.slug}
-                  className="flex h-full flex-col rounded-2xl border-primary/15 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-xl font-bold">{sub.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{sub.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+      {/* How Corbin helps */}
+      <section className="border-y bg-muted/40 py-16 md:py-20">
+        <div className="container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How Corbin Helps</h2>
+            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+              Corbin recruits and vets dedicated remote staff around the exact role, schedule, and
+              software your business needs.
+            </p>
           </div>
-        </section>
-      )}
+
+          {/* Long descriptions sit behind expandable cards, per the guide. */}
+          {industry.subIndustries && (
+            <div className="mx-auto mt-10 max-w-3xl">
+              <Accordion type="single" collapsible className="w-full">
+                {industry.subIndustries.map((sub) => (
+                  <AccordionItem key={sub.slug} value={sub.slug} id={sub.slug}>
+                    <AccordionTrigger className="text-left text-base font-semibold hover:no-underline">
+                      {sub.name}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+                      {sub.description}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Cross-links */}
-      <section className="py-16 md:py-20">
+      <section className="py-14 md:py-16">
         <div className="container">
-          <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
-            Other Industries We Staff
-          </h2>
+          <h2 className="text-center text-2xl font-bold tracking-tight">Other Industries We Staff</h2>
           <ul className="mx-auto mt-8 flex max-w-4xl flex-wrap justify-center gap-3">
             {otherIndustries.map((item) => (
               <li key={item.slug}>
@@ -149,10 +159,9 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
       </section>
 
       <ClosingCta
-        headline={`Ready to Add ${industry.name} Support?`}
-        body="Tell us about the position and we will start recruiting candidates built around your business."
+        headline="Tell Us What You Need"
+        body="We'll help you find the right person for the role, the schedule and the software you use."
         ctaLabel="Book a Free Consultation"
-        secondaryCta={{ href: '/after-hours', label: 'See After-Hours Coverage' }}
       />
     </>
   );
