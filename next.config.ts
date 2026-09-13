@@ -71,6 +71,38 @@ const nextConfig: NextConfig = {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
           },
+          {
+            // Force HTTPS for two years, including subdomains.
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            // Nothing here needs these devices, so deny them outright.
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()'
+          },
+          {
+            // Third parties in use: Calendly (booking iframe), Resend is
+            // server-side only, Google Fonts is self-hosted by next/font.
+            // 'unsafe-inline' is required for Next's inline bootstrap and the
+            // JSON-LD blocks; 'unsafe-eval' is not granted.
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://assets.calendly.com",
+              "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
+              "img-src 'self' data: blob: https://images.unsplash.com https://placehold.co https://picsum.photos https://*.calendly.com",
+              "font-src 'self' data:",
+              "connect-src 'self' https://api.calendly.com https://*.calendly.com",
+              "frame-src https://calendly.com https://*.calendly.com",
+              "media-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'self'",
+              'upgrade-insecure-requests',
+            ].join('; ')
+          },
         ],
       },
     ];

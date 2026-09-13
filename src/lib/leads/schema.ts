@@ -6,8 +6,8 @@ import { z } from 'zod';
  * anything could be posted straight past them.
  */
 
-const email = z.string().email({ message: 'Please enter a valid email address.' });
-const phone = z.string().min(10, { message: 'Please enter a valid phone number.' });
+const email = z.string().max(254).email({ message: 'Please enter a valid email address.' });
+const phone = z.string().min(10).max(40, { message: 'Please enter a valid phone number.' });
 
 /** Fields every form sends alongside the visitor's answers. */
 export const metaSchema = z.object({
@@ -33,39 +33,39 @@ export const metaSchema = z.object({
 
 /** Short consultation form: five fields, to keep friction low. */
 export const consultSchema = z.object({
-  name: z.string().min(2, { message: 'Please enter your name.' }),
-  company: z.string().min(2, { message: 'Please enter your company name.' }),
+  name: z.string().max(120).min(2, { message: 'Please enter your name.' }),
+  company: z.string().max(160).min(2, { message: 'Please enter your company name.' }),
   phone,
   email,
-  position: z.string().min(2, { message: 'Let us know which position you need help with.' }),
+  position: z.string().max(200).min(2, { message: 'Let us know which position you need help with.' }),
 });
 
 /** Long "ready to hire" intake. */
 export const hireSchema = z.object({
-  fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
-  businessName: z.string().min(2, { message: 'Business name must be at least 2 characters.' }),
-  phoneNumber: phone,
+  fullName: z.string().max(120).min(2, { message: 'Full name must be at least 2 characters.' }),
+  businessName: z.string().max(160).min(2, { message: 'Business name must be at least 2 characters.' }),
+  phoneNumber: phone.max(40),
   email,
-  businessWebsite: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
-  jobTitle: z.string().min(2, { message: 'Role you are hiring for must be at least 2 characters.' }),
-  jobDescription: z.string().min(20, { message: 'Job description must be at least 20 characters.' }),
-  essentialPrograms: z.string().optional(),
-  jobHours: z.string().min(5, { message: 'Please specify job hours.' }),
-  additionalInfo: z.string().optional(),
-  referringAgent: z.string().optional(),
+  businessWebsite: z.string().max(500).url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
+  jobTitle: z.string().max(200).min(2, { message: 'Role you are hiring for must be at least 2 characters.' }),
+  jobDescription: z.string().max(5000).min(20, { message: 'Job description must be at least 20 characters.' }),
+  essentialPrograms: z.string().max(1000).optional(),
+  jobHours: z.string().max(200).min(5, { message: 'Please specify job hours.' }),
+  additionalInfo: z.string().max(5000).optional(),
+  referringAgent: z.string().max(160).optional(),
   workplacePreference: z.enum(['in-office', 'remote', 'either'], {
     required_error: 'Please select a workplace preference.',
   }),
-  howDidYouHear: z.string().optional(),
+  howDidYouHear: z.string().max(200).optional(),
 });
 
 /** Short form used by campaign landing pages such as /roofing. */
 export const verticalSchema = z.object({
   fullName: z.string().min(2, { message: 'Please enter your full name.' }),
   company: z.string().min(2, { message: 'Please enter your company name.' }),
-  mobileNumber: phone,
-  roleNeeded: z.string().min(1, { message: 'Please choose a role.' }),
-  source: z.string().optional(),
+  mobileNumber: phone.max(40),
+  roleNeeded: z.string().max(200).min(1, { message: 'Please choose a role.' }),
+  source: z.string().max(100).optional(),
 });
 
 /** What the API route accepts: a form type, its payload, and the meta block. */

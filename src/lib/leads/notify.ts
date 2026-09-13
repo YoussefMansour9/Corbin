@@ -25,13 +25,22 @@ const FORM_LABELS: Record<LeadRow['form_type'], string> = {
   vertical: 'Roofing landing page',
 };
 
+/**
+ * Everything in this email is attacker-controlled: it comes straight from a
+ * public form. Every value interpolated into HTML must go through here.
+ */
+function esc(value: string | null | undefined) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 /** Only render rows that actually have a value. */
 function row(label: string, value: string | null | undefined) {
   if (!value) return '';
-  const safe = String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  const safe = esc(value);
   return `<tr>
     <td style="padding:6px 16px 6px 0;color:#64748b;font-size:13px;vertical-align:top;white-space:nowrap">${label}</td>
     <td style="padding:6px 0;color:#0f172a;font-size:14px">${safe}</td>
@@ -48,7 +57,7 @@ function buildHtml(lead: LeadRow, id: string) {
         ${FORM_LABELS[lead.form_type]}
       </p>
       <p style="margin:4px 0 0;color:#fff;font-size:20px;font-weight:700">
-        ${lead.name}${lead.company ? ` &middot; ${lead.company}` : ''}
+        ${esc(lead.name)}${lead.company ? ` &middot; ${esc(lead.company)}` : ''}
       </p>
     </div>
     <div style="padding:20px 24px">
@@ -115,7 +124,10 @@ export async function notifyNewLead(lead: LeadRow, id: string): Promise<NotifyRe
     return { sent: false, error: 'notify_not_configured' };
   }
 
-  const subject = `${FORM_LABELS[lead.form_type]}: ${lead.name}${lead.company ? ` (${lead.company})` : ''}`;
+  // Strip newlines so nothing can smuggle extra lines into the subject.
+  const subject = `${FORM_LABELS[lead.form_type]}: ${lead.name}${lead.company ? ` (${lead.company})` : ''}`
+    .replace(/[\r\n]+/g, ' ')
+    .slice(0, 200);
 
   try {
     const response = await fetch(RESEND_ENDPOINT, {
