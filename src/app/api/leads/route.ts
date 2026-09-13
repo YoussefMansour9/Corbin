@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { leadRequestSchema, toLeadRow } from '@/lib/leads/schema';
-import { getSupabase, isSupabaseConfigured } from '@/lib/leads/supabase';
+import { getSupabase, isSupabaseConfigured, missingSupabaseVars } from '@/lib/leads/supabase';
 import { getClientIp, hashIp } from '@/lib/leads/request-meta';
 import { notifyNewLead } from '@/lib/leads/notify';
 
@@ -43,8 +43,14 @@ export async function POST(request: Request) {
   const lead = parsed.data;
 
   if (!isSupabaseConfigured()) {
-    // Not wired up yet. Say so plainly so the form can fall back to email
-    // rather than silently reporting a save that never happened.
+    // Name the missing variables in the server log. A redeploy is required
+    // after adding them on Vercel; the dashboard showing a variable does not
+    // mean the already-built deployment can read it.
+    console.error(
+      '[leads] refusing to accept a lead: missing env var(s):',
+      missingSupabaseVars().join(', '),
+      '| a redeploy is required after adding them'
+    );
     return NextResponse.json({ ok: false, error: 'not_configured' }, { status: 503 });
   }
 

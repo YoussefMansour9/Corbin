@@ -26,3 +26,18 @@ export function getSupabase(): SupabaseClient | null {
 export function isSupabaseConfigured() {
   return Boolean(url && serviceKey);
 }
+
+/**
+ * Names the variables that are missing, without ever logging their values.
+ *
+ * Vercel only exposes environment variables to deployments built after the
+ * variable was added, so "the variable exists in the dashboard" and "the
+ * running function can see it" are different things. This makes that
+ * difference visible in the function logs instead of a bare 503.
+ */
+export function missingSupabaseVars(): string[] {
+  const missing: string[] = [];
+  if (!url) missing.push('SUPABASE_URL');
+  if (!serviceKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  return missing;
+}
