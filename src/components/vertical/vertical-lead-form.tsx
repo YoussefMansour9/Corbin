@@ -24,7 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { saveLead } from '@/lib/leads/save-lead';
+import { saveLead, type SubmitFailure } from '@/lib/leads/save-lead';
+import { buildMailtoFallback } from '@/lib/leads/submit-messages';
+import { FormErrorNotice } from '@/components/landing/form-error-notice';
 import { FormHoneypot } from '@/components/landing/form-honeypot';
 import { FormDropdownOption } from '@/lib/vertical-page-data';
 
@@ -50,6 +52,7 @@ export function VerticalLeadForm({
 }: VerticalLeadFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [failure, setFailure] = useState<SubmitFailure | null>(null);
   const mountedAt = useRef(Date.now());
   const { toast } = useToast();
 
@@ -65,8 +68,8 @@ export function VerticalLeadForm({
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
+    setFailure(null);
 
-    // The API route stores the lead and sends the notification server-side.
     const saved = await saveLead(
       { formType: 'vertical', data: { ...data, source: 'roofing-landing-page' } },
       { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
@@ -75,22 +78,25 @@ export function VerticalLeadForm({
     setIsSubmitting(false);
 
     if (!saved.ok) {
-      toast({
-        title: 'Something went wrong',
-        description: 'Please try again or contact us directly.',
-        variant: 'destructive',
-      });
+      setFailure(saved.reason);
       return;
     }
 
     toast({
-      title: 'Success!',
+      title: 'Request sent',
       description: 'Your request has been sent. We will contact you shortly.',
     });
     form.reset();
     setHoneypot('');
     mountedAt.current = Date.now();
   };
+
+  const mailtoHref = buildMailtoFallback('Roofing staffing enquiry', {
+    Name: form.getValues('fullName'),
+    Company: form.getValues('company'),
+    Phone: form.getValues('mobileNumber'),
+    Role: form.getValues('roleNeeded'),
+  });
 
   return (
     <section id="contact-form" className="py-16 md:py-24">
@@ -108,7 +114,7 @@ export function VerticalLeadForm({
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -121,7 +127,7 @@ export function VerticalLeadForm({
                     <FormItem>
                       <FormLabel>Company</FormLabel>
                       <FormControl>
-                        <Input placeholder="Acme Corp" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -134,7 +140,7 @@ export function VerticalLeadForm({
                     <FormItem>
                       <FormLabel>Mobile Number</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="(555) 123-4567" {...field} />
+                        <Input type="tel" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -164,6 +170,15 @@ export function VerticalLeadForm({
                     </FormItem>
                   )}
                 />
+                {failure && (
+                  <FormErrorNotice
+                    reason={failure}
+                    mailtoHref={mailtoHref}
+                    onRetry={form.handleSubmit(onSubmit)}
+                    isSubmitting={isSubmitting}
+                  />
+                )}
+
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {submitText}

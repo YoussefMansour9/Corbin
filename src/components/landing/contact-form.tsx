@@ -8,7 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { saveLead } from '@/lib/leads/save-lead';
+import { saveLead, type SubmitFailure } from '@/lib/leads/save-lead';
+import { buildMailtoFallback } from '@/lib/leads/submit-messages';
+import { FormErrorNotice } from '@/components/landing/form-error-notice';
 import { hireSchema } from '@/lib/leads/schema';
 import { FormHoneypot } from '@/components/landing/form-honeypot';
 import { Loader2 } from 'lucide-react';
@@ -22,6 +24,7 @@ export function ContactForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [failure, setFailure] = useState<SubmitFailure | null>(null);
   const mountedAt = useRef(Date.now());
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,8 +47,8 @@ export function ContactForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
+    setFailure(null);
 
-    // The API route stores the lead and sends the notification server-side.
     const saved = await saveLead(
       { formType: 'hire', data: values },
       { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
@@ -53,23 +56,35 @@ export function ContactForm() {
 
     setIsSubmitting(false);
 
-    if (saved.ok) {
-      toast({
-        title: 'Form Submitted!',
-        description: "Thank you for your inquiry. We'll be in touch within 24 hours.",
-      });
-      form.reset();
-      setHoneypot('');
-      mountedAt.current = Date.now();
+    if (!saved.ok) {
+      // Keep the answers. This form is long, and asking someone to retype a
+      // job description after a failure loses the lead outright.
+      setFailure(saved.reason);
       return;
     }
 
     toast({
-      title: 'Something went wrong',
-      description: 'There was an error sending your message. Please try again later.',
-      variant: 'destructive',
+      title: 'Form submitted',
+      description: "Thank you for your inquiry. We'll be in touch within 24 hours.",
     });
+    form.reset();
+    setHoneypot('');
+    mountedAt.current = Date.now();
   }
+
+  const mailtoHref = buildMailtoFallback('Ready to hire enquiry', {
+    Name: form.getValues('fullName'),
+    Business: form.getValues('businessName'),
+    Phone: form.getValues('phoneNumber'),
+    Email: form.getValues('email'),
+    Website: form.getValues('businessWebsite'),
+    Role: form.getValues('jobTitle'),
+    'Job description': form.getValues('jobDescription'),
+    Software: form.getValues('essentialPrograms'),
+    Hours: form.getValues('jobHours'),
+    Workplace: form.getValues('workplacePreference'),
+    Notes: form.getValues('additionalInfo'),
+  });
 
   return (
     <Form {...form}>
@@ -86,7 +101,7 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel>Full Name <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,7 +114,7 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel>Business Name <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="Acme Inc." {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,7 +127,7 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel>Phone Number <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="(555) 555-5555" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -125,7 +140,7 @@ export function ContactForm() {
               <FormItem>
                 <FormLabel>Email Address <span className="text-destructive">*</span></FormLabel>
                 <FormControl>
-                  <Input placeholder="john.doe@example.com" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,7 +154,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Business Website</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://www.example.com" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -154,7 +169,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Role you are hiring for <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Senior Virtual Assistant" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,7 +184,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Job Description <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Please include a full length summary of the job requirements..." rows={5} {...field} />
+                    <Textarea rows={5} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -184,7 +199,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Please list all required software and programs used for this role</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="e.g., Excel, Cad, QuickBooks" rows={3} {...field} />
+                    <Textarea rows={3} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -199,7 +214,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Daily job hours EST <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., M-F 9 AM - 5 PM" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -214,7 +229,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Anything else you’d like to share with us?</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Any other details..." rows={3} {...field} />
+                    <Textarea rows={3} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -229,7 +244,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>Referral</FormLabel>
                   <FormControl>
-                    <Input placeholder="Agent's name (if any)" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -276,7 +291,7 @@ export function ContactForm() {
                 <FormItem>
                   <FormLabel>How did you hear about us?</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Google, a friend, etc." {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -284,6 +299,23 @@ export function ContactForm() {
             />
           </div>
         </div>
+
+        {failure && (
+
+          <FormErrorNotice
+
+            reason={failure}
+
+            mailtoHref={mailtoHref}
+
+            onRetry={form.handleSubmit(onSubmit)}
+
+            isSubmitting={isSubmitting}
+
+          />
+
+        )}
+
 
         <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

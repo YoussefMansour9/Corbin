@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { saveLead } from '@/lib/leads/save-lead';
+import { saveLead, type SubmitFailure } from '@/lib/leads/save-lead';
+import { buildMailtoFallback } from '@/lib/leads/submit-messages';
+import { FormErrorNotice } from '@/components/landing/form-error-notice';
 import { consultSchema } from '@/lib/leads/schema';
 import { FormHoneypot } from '@/components/landing/form-honeypot';
 
@@ -21,15 +23,14 @@ const formSchema = consultSchema;
 
 type FormValues = z.infer<typeof formSchema>;
 
-const fields: { name: keyof FormValues; label: string; placeholder: string; type?: string; full?: boolean }[] = [
-  { name: 'name', label: 'Name', placeholder: 'John Smith' },
-  { name: 'company', label: 'Company', placeholder: 'Smith & Co.' },
-  { name: 'phone', label: 'Phone', placeholder: '(555) 123-4567', type: 'tel' },
-  { name: 'email', label: 'Email', placeholder: 'john@company.com', type: 'email' },
+const fields: { name: keyof FormValues; label: string; type?: string; full?: boolean }[] = [
+  { name: 'name', label: 'Name' },
+  { name: 'company', label: 'Company' },
+  { name: 'phone', label: 'Phone', type: 'tel' },
+  { name: 'email', label: 'Email', type: 'email' },
   {
     name: 'position',
     label: 'What position do you need help with?',
-    placeholder: 'After-hours call agent, administrative assistant, CAD drafter…',
     full: true,
   },
 ];
@@ -38,6 +39,7 @@ export function BookConsultForm() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [failure, setFailure] = useState<SubmitFailure | null>(null);
   const mountedAt = useRef(Date.now());
 
   const form = useForm<FormValues>({
@@ -47,8 +49,8 @@ export function BookConsultForm() {
 
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
+    setFailure(null);
 
-    // The API route stores the lead and sends the notification server-side.
     const saved = await saveLead(
       { formType: 'consult', data: values },
       { companyWebsite: honeypot, elapsedMs: Date.now() - mountedAt.current }
@@ -56,24 +58,29 @@ export function BookConsultForm() {
 
     setIsSubmitting(false);
 
-    // Only a genuine failure is one where neither path captured the lead.
-    if (saved.ok) {
-      toast({
-        title: 'Request Received',
-        description: "Thanks for reaching out. We'll be in touch shortly to schedule your consultation.",
-      });
-      form.reset();
-      setHoneypot('');
-      mountedAt.current = Date.now();
+    if (!saved.ok) {
+      // Keep everything the visitor typed. Clearing the form on failure
+      // would make them retype it, and many simply leave instead.
+      setFailure(saved.reason);
       return;
     }
 
     toast({
-      title: 'Something went wrong',
-      description: 'There was an error sending your request. Please try again later.',
-      variant: 'destructive',
+      title: 'Request received',
+      description: "Thanks for reaching out. We'll be in touch shortly to schedule your consultation.",
     });
+    form.reset();
+    setHoneypot('');
+    mountedAt.current = Date.now();
   }
+
+  const mailtoHref = buildMailtoFallback('Consultation request', {
+    Name: form.getValues('name'),
+    Company: form.getValues('company'),
+    Phone: form.getValues('phone'),
+    Email: form.getValues('email'),
+    'Position needed': form.getValues('position'),
+  });
 
   return (
     <Form {...form}>
@@ -95,7 +102,7 @@ export function BookConsultForm() {
                   </FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input type={item.type ?? 'text'} placeholder={item.placeholder} {...field} />
+                      <Input type={item.type ?? 'text'} {...field} />
                       {!fieldState.error && field.value.length >= 2 && (
                         <Check className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-green-500" />
                       )}
@@ -107,6 +114,15 @@ export function BookConsultForm() {
             />
           ))}
         </div>
+
+        {failure && (
+          <FormErrorNotice
+            reason={failure}
+            mailtoHref={mailtoHref}
+            onRetry={form.handleSubmit(onSubmit)}
+            isSubmitting={isSubmitting}
+          />
+        )}
 
         <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
