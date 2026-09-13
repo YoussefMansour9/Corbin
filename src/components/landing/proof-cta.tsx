@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -63,17 +64,18 @@ export function ProofCta() {
             </div>
           </div>
 
+          {/* Same framing as the About page banner: 16:9, cover, rounded. */}
           <div className="overflow-hidden rounded-2xl border shadow-lg">
-            <video
-              controls
-              playsInline
-              preload="metadata"
-              src="/videos/location-2.mp4"
-              poster="/images/office/office-team.jpg"
+            <Image
+              src="/images/about.jpg"
+              alt=""
+              aria-hidden="true"
+              width={1536}
+              height={1024}
+              sizes="(max-width: 1024px) 100vw, 576px"
+              quality={85}
               className="aspect-video w-full bg-muted object-cover"
-            >
-              Your browser does not support the video tag.
-            </video>
+            />
           </div>
         </div>
       </div>

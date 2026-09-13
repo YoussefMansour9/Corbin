@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { ClosingCta } from '@/components/shared/closing-cta';
 
@@ -55,21 +56,21 @@ export function AboutStory() {
         </div>
       </section>
 
-      {/* The office. Real footage rather than stock or a logo card. */}
+      {/* The office. */}
       <section className="border-y bg-muted/40 py-16 md:py-20">
         <div className="container">
           <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-2">
             <div className="overflow-hidden rounded-2xl border shadow-lg">
-              <video
-                controls
-                playsInline
-                preload="metadata"
-                src="/videos/location-1.mp4"
-                poster="/images/office/office-floor.jpg"
+              <Image
+                src="/images/about.jpg"
+                alt=""
+                aria-hidden="true"
+                width={1536}
+                height={1024}
+                sizes="(max-width: 1024px) 100vw, 576px"
+                quality={85}
                 className="aspect-video w-full bg-muted object-cover"
-              >
-                Your browser does not support the video tag.
-              </video>
+              />
             </div>
 
             <div>
